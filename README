@@ -1,0 +1,36 @@
+Robert LaGrasse
+robert.lagrasse@gmail.com
+
+Udacity Android Developer NanoDegree Project 3
+
+StockFox is the new and improved StockHawk.
+
+Basics:
+Pulls data from the Yahoo! finance API, parses, and drops it into a local database.
+Background service keeps data current
+UI Presents a recyclerView to display content
+Nothing happens on click.
+Item swipes remove elements from the database. 
+
+Required Improvements:
+Enable ScreenReader
+Prepare for Arabic Translations
+Show prices over time
+Build a Widget
+Fix bug - app crashes on request for non-existant stock
+Opening screen is blank on initial load if there's no internet connection - provide some user feedback.
+
+
+Initial commit - 
+
+I didn't care for the annotated content provider in the original product. The database didn't contain all
+ of the fields that the Yahoo! API sends down. I leveraged some boiler plate code I derived from my 
+PopularMovies application to build a DatabaseManager, DatabaseContract, and DatabaseContentProvider. I also
+constructed a class to represent an individual Stock. 
+
+The column names in the stock table in DatabaseContract, and the attribute names in the Stock object are
+identical, and derived directly from the JSON values the Yahoo! API sends down.
+
+MainActivity currently just stands up the a couple of methods to test database queries and inserts. This
+and the logging statements in the various classes validates the operation of the DatabaseManager, 
+DatabaseContentProvider, and definitions in DatabaseContract.  
