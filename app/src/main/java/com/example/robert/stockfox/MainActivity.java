@@ -31,31 +31,14 @@ public class MainActivity extends AppCompatActivity {
         networkConnected = Utils.networkCheck(this);
 
         // Fire up the background thread
-        mServiceIntent = new Intent(this, StockIntentService.class);
+        mServiceIntent = new Intent(this, GenericIntentService.class);
         if (networkConnected) {
             // Setup a download service on the background thread
             startService(mServiceIntent);
 
-            // Schedule a periodic task to perform the downloads additional downloads
-            long period = 3600L;
-            long flex = 10L;
-            String periodicTag = "periodic";
-
-            // create a periodic task to pull stocks once every hour after the app has been opened. This
-            // is so Widget data stays up to date.
-            Log.e(TAG, "Starting Periodic Task");
-            PeriodicTask periodicTask = new PeriodicTask.Builder()
-                    .setService(StockTaskService.class)
-                    .setPeriod(period)
-                    .setFlex(flex)
-                    .setTag(periodicTag)
-                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-                    .setRequiresCharging(false)
-                    .build();
-            // Schedule task with tag "periodic." This ensure that only the stocks present in the DB
-            // are updated.
-            GcmNetworkManager.getInstance(this).schedule(periodicTask);
-        } else networkToast();
+            // Setup periodic downloads
+            GcmNetworkManager.getInstance(this).schedule(Utils.buildPeriodicTask());
+        } else Utils.networkToast(this);
     }
 
     public void insertTest(){
