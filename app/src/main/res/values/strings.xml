@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">StockFox</string>
+    <string name="network_toast">Network Unavailable</string>
+</resources>
