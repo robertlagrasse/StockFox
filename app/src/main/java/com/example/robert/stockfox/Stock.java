@@ -1,5 +1,8 @@
 package com.example.robert.stockfox;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by robert on 11/3/16.
  *
@@ -91,6 +94,94 @@ public class Stock {
     private String StockExchange;
     private String DividendYield;
     private String PercentChange;
+
+    public Stock(JSONObject jsonObject) throws JSONException {
+        symbol = jsonObject.getString("symbol");
+        Ask = jsonObject.getString("Ask");
+        AverageDailyVolume = jsonObject.getString("AverageDailyVolume");
+        Bid = jsonObject.getString("Bid");
+        AskRealtime = jsonObject.getString("AskRealtime");
+        BidRealtime = jsonObject.getString("BidRealtime");
+        BookValue = jsonObject.getString("BookValue");
+        Change_PercentChange = jsonObject.getString("Change_PercentChange");
+        Change = jsonObject.getString("Change");
+        Commission = jsonObject.getString("Commission");
+        Currency = jsonObject.getString("Currency");
+        ChangeRealtime = jsonObject.getString("ChangeRealtime");
+        AfterHoursChangeRealtime = jsonObject.getString("AfterHoursChangeRealtime");
+        DividendShare = jsonObject.getString("DividendShare");
+        LastTradeDate = jsonObject.getString("LastTradeDate");
+        TradeDate = jsonObject.getString("TradeDate");
+        EarningsShare = jsonObject.getString("EarningsShare");
+        ErrorIndicationreturnedforsymbolchangedinvalid = jsonObject.getString("ErrorIndicationreturnedforsymbolchangedinvalid");
+        EPSEstimateCurrentYear = jsonObject.getString("EPSEstimateCurrentYear");
+        EPSEstimateNextYear = jsonObject.getString("EPSEstimateNextYear");
+        EPSEstimateNextQuarter = jsonObject.getString("EPSEstimateNextQuarter");
+        DaysLow = jsonObject.getString("DaysLow");
+        DaysHigh = jsonObject.getString("DaysHigh");
+        YearLow = jsonObject.getString("YearLow");
+        YearHigh = jsonObject.getString("YearHigh");
+        HoldingsGainPercent = jsonObject.getString("HoldingsGainPercent");
+        AnnualizedGain = jsonObject.getString("AnnualizedGain");
+        HoldingsGain = jsonObject.getString("HoldingsGain");
+        HoldingsGainPercentRealtime = jsonObject.getString("HoldingsGainPercentRealtime");
+        HoldingsGainRealtime = jsonObject.getString("HoldingsGainRealtime");
+        MoreInfo = jsonObject.getString("MoreInfo");
+        OrderBookRealtime = jsonObject.getString("OrderBookRealtime");
+        MarketCapitalization = jsonObject.getString("MarketCapitalization");
+        MarketCapRealtime = jsonObject.getString("MarketCapRealtime");
+        EBITDA = jsonObject.getString("EBITDA");
+        ChangeFromYearLow = jsonObject.getString("ChangeFromYearLow");
+        PercentChangeFromYearLow = jsonObject.getString("PercentChangeFromYearLow");
+        LastTradeRealtimeWithTime = jsonObject.getString("LastTradeRealtimeWithTime");
+        ChangePercentRealtime = jsonObject.getString("ChangePercentRealtime");
+        ChangeFromYearHigh = jsonObject.getString("ChangeFromYearHigh");
+        PercebtChangeFromYearHigh = jsonObject.getString("PercebtChangeFromYearHigh");
+        LastTradeWithTime = jsonObject.getString("LastTradeWithTime");
+        LastTradePriceOnly = jsonObject.getString("LastTradePriceOnly");
+        HighLimit = jsonObject.getString("HighLimit");
+        LowLimit = jsonObject.getString("LowLimit");
+        DaysRange = jsonObject.getString("DaysRange");
+        DaysRangeRealtime = jsonObject.getString("DaysRangeRealtime");
+        FiftydayMovingAverage = jsonObject.getString("FiftydayMovingAverage");
+        TwoHundreddayMovingAverage = jsonObject.getString("TwoHundreddayMovingAverage");
+        ChangeFromTwoHundreddayMovingAverage = jsonObject.getString("ChangeFromTwoHundreddayMovingAverage");
+        PercentChangeFromTwoHundreddayMovingAverage = jsonObject.getString("PercentChangeFromTwoHundreddayMovingAverage");
+        ChangeFromFiftydayMovingAverage = jsonObject.getString("ChangeFromFiftydayMovingAverage");
+        PercentChangeFromFiftydayMovingAverage = jsonObject.getString("PercentChangeFromFiftydayMovingAverage");
+        Name = jsonObject.getString("Name");
+        Notes = jsonObject.getString("Notes");
+        Open = jsonObject.getString("Open");
+        PreviousClose = jsonObject.getString("PreviousClose");
+        PricePaid = jsonObject.getString("PricePaid");
+        ChangeinPercent = jsonObject.getString("ChangeinPercent");
+        PriceSales = jsonObject.getString("PriceSales");
+        PriceBook = jsonObject.getString("PriceBook");
+        ExDividendDate = jsonObject.getString("ExDividendDate");
+        PERatio = jsonObject.getString("PERatio");
+        DividendPayDate = jsonObject.getString("DividendPayDate");
+        PERatioRealtime = jsonObject.getString("PERatioRealtime");
+        PEGRatio = jsonObject.getString("PEGRatio");
+        PriceEPSEstimateCurrentYear = jsonObject.getString("PriceEPSEstimateCurrentYear");
+        PriceEPSEstimateNextYear = jsonObject.getString("PriceEPSEstimateNextYear");
+        SharesOwned = jsonObject.getString("SharesOwned");
+        ShortRatio = jsonObject.getString("ShortRatio");
+        LastTradeTime = jsonObject.getString("LastTradeTime");
+        TickerTrend = jsonObject.getString("TickerTrend");
+        OneyrTargetPrice = jsonObject.getString("OneyrTargetPrice");
+        Volume = jsonObject.getString("Volume");
+        HoldingsValue = jsonObject.getString("HoldingsValue");
+        HoldingsValueRealtime = jsonObject.getString("HoldingsValueRealtime");
+        YearRange = jsonObject.getString("YearRange");
+        DaysValueChange = jsonObject.getString("DaysValueChange");
+        DaysValueChangeRealtime = jsonObject.getString("DaysValueChangeRealtime");
+        StockExchange = jsonObject.getString("StockExchange");
+        DividendYield = jsonObject.getString("DividendYield");
+        PercentChange = jsonObject.getString("PercentChange");
+    }
+
+    public Stock() {
+    }
 
     public String getSymbol() {
         return symbol;

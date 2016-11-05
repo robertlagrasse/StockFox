@@ -71,6 +71,7 @@ public class GenericTaskService extends GcmTaskService{
 
         // Handle data
         Log.e(TAG, "getResponse = " + getResponse);
+        StockFoxUtils.quoteJsonToStock(getResponse, mContext);
 
         return result;
     }
