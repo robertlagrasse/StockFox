@@ -12,6 +12,10 @@ import android.util.Log;
 
 /**
  * Created by robert on 11/2/16.
+ *
+ * The ContentProvider provides a front end for the local database so this application,
+ * and potentially others, can access data from SQLite
+ *
  */
 
 public class DatabaseContentProvider extends ContentProvider{
@@ -50,11 +54,6 @@ public class DatabaseContentProvider extends ContentProvider{
                         String sortOrder) {
 
         Log.e(TAG, "query() URI: " + uri.toString());
-        Log.e(TAG, "query() URI pathsegment 0 " + uri.getPathSegments().get(0));
-        Log.e(TAG, "query() URI pathsegment 1 " + uri.getPathSegments().get(1));
-        Log.e(TAG, "query() URI pathsegment 2 " + uri.getPathSegments().get(2));
-
-
 
         Cursor retCursor;
         switch (getUriMatcher().match(uri)) {
@@ -68,7 +67,7 @@ public class DatabaseContentProvider extends ContentProvider{
                         selectionArgs,
                         null,
                         null,
-                        sortOrder
+                        null
                 );
                 break;
             }
@@ -131,6 +130,8 @@ public class DatabaseContentProvider extends ContentProvider{
                 Log.e(TAG, "ALL_STOCKS case met");
                 long _id = db.insert(DatabaseContract.StockTable.TABLE_NAME, null, contentValues);
                 returnUri = Uri.withAppendedPath(uri, String.valueOf(_id));
+                Log.e(TAG, "Inserting: " + String.valueOf(contentValues.get(DatabaseContract.StockTable.SYMBOL)) +
+                " returned " + String.valueOf(_id));
                 break;
             }
             case ONE_STOCK: {

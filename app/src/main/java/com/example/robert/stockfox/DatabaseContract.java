@@ -15,7 +15,7 @@ import android.provider.BaseColumns;
  *
  */
 
-public class DatabaseContract {
+class DatabaseContract {
 
     // Some "global" stuff
     public static final String      API_KEY             = "";
@@ -30,14 +30,14 @@ public class DatabaseContract {
     private static final String     BOOLEAN             = " BOOLEAN, ";
 
     // This defines the content authority
-    public static final String CONTENT_AUTHORITY    = "com.example.robert.stockfox";
+    static final String CONTENT_AUTHORITY    = "com.example.robert.stockfox";
 
     // This is the base path for our URI
-    public static final Uri BASE_CONTENT_URI        = Uri.parse("content://" + CONTENT_AUTHORITY);
+    private static final Uri BASE_CONTENT_URI        = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     // This path matches the stocks table
-    public static final String STOCK_PATH = "stocks";
-    public static final Uri CONTENT_URI =
+    static final String STOCK_PATH = "stocks";
+    static final Uri CONTENT_URI =
             BASE_CONTENT_URI.buildUpon().appendPath(STOCK_PATH).build();
 
     // Some public methods to help build ContentProvider requests
@@ -46,108 +46,95 @@ public class DatabaseContract {
         return ContentUris.withAppendedId(CONTENT_URI, id);
     }
 
-    public static Uri buildUserSelectionURI() {
-        return CONTENT_URI.buildUpon().appendPath("choice").build();
-    }
-    public static Uri buildPopularURI() {
-        return CONTENT_URI.buildUpon().appendPath("popular").build();
-    }
-    public static Uri buildTopRatedURI() {
-        return CONTENT_URI.buildUpon().appendPath("top_rated").build();
-    }
-    public static Uri buildFavoritesURI() {
-        return CONTENT_URI.buildUpon().appendPath("favorites").build();
-    }
-
-    public static final class StockTable implements BaseColumns {
+    static final class StockTable implements BaseColumns {
         /*
         This class defines the properties of each stock. This is identical to
         the fields as they come down in JSON from Yahoo.
      */
-        public static final String TABLE_NAME                                       = "stocks";
-        public static final String _ID                                              = "_id";
-        public static final String SYMBOL                                           = "symbol";
-        public static final String ASK                                              = "Ask";
-        public static final String AVERAGEDAILYVOLUME                               = "AverageDailyVolume";
-        public static final String BID                                              = "Bid";
-        public static final String ASKREALTIME                                      = "AskRealtime";
-        public static final String BIDREALTIME                                      = "BidRealtime";
-        public static final String BOOKVALUE                                        = "BookValue";
-        public static final String CHANGE_PERCENTCHANGE                             = "Change_PercentChange";
-        public static final String CHANGE                                           = "Change";
-        public static final String COMMISSION                                       = "Commission";
-        public static final String CURRENCY                                         = "Currency";
-        public static final String CHANGEREALTIME                                   = "ChangeRealtime";
-        public static final String AFTERHOURSCHANGEREALTIME                         = "AfterHoursChangeRealtime";
-        public static final String DIVIDENDSHARE                                    = "DividendShare";
-        public static final String LASTTRADEDATE                                    = "LastTradeDate";
-        public static final String TRADEDATE                                        = "TradeDate";
-        public static final String EARNINGSSHARE                                    = "EarningsShare";
-        public static final String ERRORINDICATIONRETURNEDFORSYMBOLCHANGEDINVALID   = "ErrorIndicationreturnedforsymbolchangedinvalid";
-        public static final String EPSESTIMATECURRENTYEAR                           = "EPSEstimateCurrentYear";
-        public static final String EPSESTIMATENEXTYEAR                              = "EPSEstimateNextYear";
-        public static final String EPSESTIMATENEXTQUARTER                           = "EPSEstimateNextQuarter";
-        public static final String DAYSLOW                                          = "DaysLow";
-        public static final String DAYSHIGH                                         = "DaysHigh";
-        public static final String YEARLOW                                          = "YearLow";
-        public static final String YEARHIGH                                         = "YearHigh";
-        public static final String HOLDINGSGAINPERCENT                              = "HoldingsGainPercent";
-        public static final String ANNUALIZEDGAIN                                   = "AnnualizedGain";
-        public static final String HOLDINGSGAIN                                     = "HoldingsGain";
-        public static final String HOLDINGSGAINPERCENTREALTIME                      = "HoldingsGainPercentRealtime";
-        public static final String HOLDINGSGAINREALTIME                             = "HoldingsGainRealtime";
-        public static final String MOREINFO                                         = "MoreInfo";
-        public static final String ORDERBOOKREALTIME                                = "OrderBookRealtime";
-        public static final String MARKETCAPITALIZATION                             = "MarketCapitalization";
-        public static final String MARKETCAPREALTIME                                = "MarketCapRealtime";
-        public static final String EBITDA                                           = "EBITDA";
-        public static final String CHANGEFROMYEARLOW                                = "ChangeFromYearLow";
-        public static final String PERCENTCHANGEFROMYEARLOW                         = "PercentChangeFromYearLow";
-        public static final String LASTTRADEREALTIMEWITHTIME                        = "LastTradeRealtimeWithTime";
-        public static final String CHANGEPERCENTREALTIME                            = "ChangePercentRealtime";
-        public static final String CHANGEFROMYEARHIGH                               = "ChangeFromYearHigh";
-        public static final String PERCEBTCHANGEFROMYEARHIGH                        = "PercebtChangeFromYearHigh";
-        public static final String LASTTRADEWITHTIME                                = "LastTradeWithTime";
-        public static final String LASTTRADEPRICEONLY                               = "LastTradePriceOnly";
-        public static final String HIGHLIMIT                                        = "HighLimit";
-        public static final String LOWLIMIT                                         = "LowLimit";
-        public static final String DAYSRANGE                                        = "DaysRange";
-        public static final String DAYSRANGEREALTIME                                = "DaysRangeRealtime";
-        public static final String FIFTYDAYMOVINGAVERAGE                            = "FiftydayMovingAverage";
-        public static final String TWOHUNDREDDAYMOVINGAVERAGE                       = "TwoHundreddayMovingAverage";
-        public static final String CHANGEFROMTWOHUNDREDDAYMOVINGAVERAGE             = "ChangeFromTwoHundreddayMovingAverage";
-        public static final String PERCENTCHANGEFROMTWOHUNDREDDAYMOVINGAVERAGE      = "PercentChangeFromTwoHundreddayMovingAverage";
-        public static final String CHANGEFROMFIFTYDAYMOVINGAVERAGE                  = "ChangeFromFiftydayMovingAverage";
-        public static final String PERCENTCHANGEFROMFIFTYDAYMOVINGAVERAGE           = "PercentChangeFromFiftydayMovingAverage";
-        public static final String NAME                                             = "Name";
-        public static final String NOTES                                            = "Notes";
-        public static final String OPEN                                             = "Open";
-        public static final String PREVIOUSCLOSE                                    = "PreviousClose";
-        public static final String PRICEPAID                                        = "PricePaid";
-        public static final String CHANGEINPERCENT                                  = "ChangeinPercent";
-        public static final String PRICESALES                                       = "PriceSales";
-        public static final String PRICEBOOK                                        = "PriceBook";
-        public static final String EXDIVIDENDDATE                                   = "ExDividendDate";
-        public static final String PERATIO                                          = "PERatio";
-        public static final String DIVIDENDPAYDATE                                  = "DividendPayDate";
-        public static final String PERATIOREALTIME                                  = "PERatioRealtime";
-        public static final String PEGRATIO                                         = "PEGRatio";
-        public static final String PRICEEPSESTIMATECURRENTYEAR                      = "PriceEPSEstimateCurrentYear";
-        public static final String PRICEEPSESTIMATENEXTYEAR                         = "PriceEPSEstimateNextYear";
-        public static final String SHARESOWNED                                      = "SharesOwned";
-        public static final String SHORTRATIO                                       = "ShortRatio";
-        public static final String LASTTRADETIME                                    = "LastTradeTime";
-        public static final String TICKERTREND                                      = "TickerTrend";
-        public static final String ONEYRTARGETPRICE                                 = "OneyrTargetPrice";
-        public static final String VOLUME                                           = "Volume";
-        public static final String HOLDINGSVALUE                                    = "HoldingsValue";
-        public static final String HOLDINGSVALUEREALTIME                            = "HoldingsValueRealtime";
-        public static final String YEARRANGE                                        = "YearRange";
-        public static final String DAYSVALUECHANGE                                  = "DaysValueChange";
-        public static final String DAYSVALUECHANGEREALTIME                          = "DaysValueChangeRealtime";
-        public static final String STOCKEXCHANGE                                    = "StockExchange";
-        public static final String DIVIDENDYIELD                                    = "DividendYield";
-        public static final String PERCENTCHANGE                                    = "PercentChange";
+        static final String TABLE_NAME                                       = "stocks";
+        static final String _ID                                              = "_id";
+        static final String SYMBOL                                           = "symbol";
+        static final String ASK                                              = "Ask";
+        static final String AVERAGEDAILYVOLUME                               = "AverageDailyVolume";
+        static final String BID                                              = "Bid";
+        static final String ASKREALTIME                                      = "AskRealtime";
+        static final String BIDREALTIME                                      = "BidRealtime";
+        static final String BOOKVALUE                                        = "BookValue";
+        static final String CHANGE_PERCENTCHANGE                             = "Change_PercentChange";
+        static final String CHANGE                                           = "Change";
+        static final String COMMISSION                                       = "Commission";
+        static final String CURRENCY                                         = "Currency";
+        static final String CHANGEREALTIME                                   = "ChangeRealtime";
+        static final String AFTERHOURSCHANGEREALTIME                         = "AfterHoursChangeRealtime";
+        static final String DIVIDENDSHARE                                    = "DividendShare";
+        static final String LASTTRADEDATE                                    = "LastTradeDate";
+        static final String TRADEDATE                                        = "TradeDate";
+        static final String EARNINGSSHARE                                    = "EarningsShare";
+        static final String ERRORINDICATIONRETURNEDFORSYMBOLCHANGEDINVALID   = "ErrorIndicationreturnedforsymbolchangedinvalid";
+        static final String EPSESTIMATECURRENTYEAR                           = "EPSEstimateCurrentYear";
+        static final String EPSESTIMATENEXTYEAR                              = "EPSEstimateNextYear";
+        static final String EPSESTIMATENEXTQUARTER                           = "EPSEstimateNextQuarter";
+        static final String DAYSLOW                                          = "DaysLow";
+        static final String DAYSHIGH                                         = "DaysHigh";
+        static final String YEARLOW                                          = "YearLow";
+        static final String YEARHIGH                                         = "YearHigh";
+        static final String HOLDINGSGAINPERCENT                              = "HoldingsGainPercent";
+        static final String ANNUALIZEDGAIN                                   = "AnnualizedGain";
+        static final String HOLDINGSGAIN                                     = "HoldingsGain";
+        static final String HOLDINGSGAINPERCENTREALTIME                      = "HoldingsGainPercentRealtime";
+        static final String HOLDINGSGAINREALTIME                             = "HoldingsGainRealtime";
+        static final String MOREINFO                                         = "MoreInfo";
+        static final String ORDERBOOKREALTIME                                = "OrderBookRealtime";
+        static final String MARKETCAPITALIZATION                             = "MarketCapitalization";
+        static final String MARKETCAPREALTIME                                = "MarketCapRealtime";
+        static final String EBITDA                                           = "EBITDA";
+        static final String CHANGEFROMYEARLOW                                = "ChangeFromYearLow";
+        static final String PERCENTCHANGEFROMYEARLOW                         = "PercentChangeFromYearLow";
+        static final String LASTTRADEREALTIMEWITHTIME                        = "LastTradeRealtimeWithTime";
+        static final String CHANGEPERCENTREALTIME                            = "ChangePercentRealtime";
+        static final String CHANGEFROMYEARHIGH                               = "ChangeFromYearHigh";
+        static final String PERCEBTCHANGEFROMYEARHIGH                        = "PercebtChangeFromYearHigh";
+        static final String LASTTRADEWITHTIME                                = "LastTradeWithTime";
+        static final String LASTTRADEPRICEONLY                               = "LastTradePriceOnly";
+        static final String HIGHLIMIT                                        = "HighLimit";
+        static final String LOWLIMIT                                         = "LowLimit";
+        static final String DAYSRANGE                                        = "DaysRange";
+        static final String DAYSRANGEREALTIME                                = "DaysRangeRealtime";
+        static final String FIFTYDAYMOVINGAVERAGE                            = "FiftydayMovingAverage";
+        static final String TWOHUNDREDDAYMOVINGAVERAGE                       = "TwoHundreddayMovingAverage";
+        static final String CHANGEFROMTWOHUNDREDDAYMOVINGAVERAGE             = "ChangeFromTwoHundreddayMovingAverage";
+        static final String PERCENTCHANGEFROMTWOHUNDREDDAYMOVINGAVERAGE      = "PercentChangeFromTwoHundreddayMovingAverage";
+        static final String CHANGEFROMFIFTYDAYMOVINGAVERAGE                  = "ChangeFromFiftydayMovingAverage";
+        static final String PERCENTCHANGEFROMFIFTYDAYMOVINGAVERAGE           = "PercentChangeFromFiftydayMovingAverage";
+        static final String NAME                                             = "Name";
+        static final String NOTES                                            = "Notes";
+        static final String OPEN                                             = "Open";
+        static final String PREVIOUSCLOSE                                    = "PreviousClose";
+        static final String PRICEPAID                                        = "PricePaid";
+        static final String CHANGEINPERCENT                                  = "ChangeinPercent";
+        static final String PRICESALES                                       = "PriceSales";
+        static final String PRICEBOOK                                        = "PriceBook";
+        static final String EXDIVIDENDDATE                                   = "ExDividendDate";
+        static final String PERATIO                                          = "PERatio";
+        static final String DIVIDENDPAYDATE                                  = "DividendPayDate";
+        static final String PERATIOREALTIME                                  = "PERatioRealtime";
+        static final String PEGRATIO                                         = "PEGRatio";
+        static final String PRICEEPSESTIMATECURRENTYEAR                      = "PriceEPSEstimateCurrentYear";
+        static final String PRICEEPSESTIMATENEXTYEAR                         = "PriceEPSEstimateNextYear";
+        static final String SHARESOWNED                                      = "SharesOwned";
+        static final String SHORTRATIO                                       = "ShortRatio";
+        static final String LASTTRADETIME                                    = "LastTradeTime";
+        static final String TICKERTREND                                      = "TickerTrend";
+        static final String ONEYRTARGETPRICE                                 = "OneyrTargetPrice";
+        static final String VOLUME                                           = "Volume";
+        static final String HOLDINGSVALUE                                    = "HoldingsValue";
+        static final String HOLDINGSVALUEREALTIME                            = "HoldingsValueRealtime";
+        static final String YEARRANGE                                        = "YearRange";
+        static final String DAYSVALUECHANGE                                  = "DaysValueChange";
+        static final String DAYSVALUECHANGEREALTIME                          = "DaysValueChangeRealtime";
+        static final String STOCKEXCHANGE                                    = "StockExchange";
+        static final String DIVIDENDYIELD                                    = "DividendYield";
+        static final String PERCENTCHANGE                                    = "PercentChange";
 
         // Handy string array for when you need to refer to all columns
         public static final String[] STOCK_ALL_KEYS = new String[] {
@@ -237,7 +224,7 @@ public class DatabaseContract {
                 PERCENTCHANGE};
 
         // SQL Create table command
-        public static final String CREATE_TABLE               =
+        static final String CREATE_TABLE               =
                 "CREATE TABLE "            +
                         TABLE_NAME                 + "(" +
                         _ID                 + " INTEGER PRIMARY KEY AUTOINCREMENT, " +

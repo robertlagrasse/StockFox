@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
             // Setup periodic downloads
             GcmNetworkManager.getInstance(this).schedule(Utils.buildPeriodicTask());
         } else Utils.networkToast(this);
+
+        queryTest();
     }
 
     public void insertTest(){
@@ -61,16 +63,14 @@ public class MainActivity extends AppCompatActivity {
     public void queryTest(){
         String TAG = "queryTest()";
         String fullURI;
-        fullURI = DatabaseContract.CONTENT_URI.buildUpon().appendPath("symbol").appendPath("FARK").build().toString();
-        Log.e(TAG, "fullURI = " + fullURI);
 
         Cursor cursor;
         // Pull the details on the selected movie from the MovieEntry table
         cursor = mContext.getContentResolver().query(
                 // Have to build a URI here that looks like
-                // content://com.example.robert.stockfox/stocks/symbol/xxxx
-                DatabaseContract.CONTENT_URI.buildUpon().appendPath("symbol").appendPath("FARK").build(),
-                DatabaseContract.StockTable.STOCK_ALL_KEYS,
+                // content://com.example.robert.stockfox/stocks/
+                DatabaseContract.CONTENT_URI,
+                null,
                 null,
                 null,
                 null);
@@ -78,18 +78,17 @@ public class MainActivity extends AppCompatActivity {
         // Populate the movie object
         Stock stock = new Stock();
 
-        if (cursor.moveToFirst()) {
-            stock.setSymbol(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL)));
-            // Build the balance of these elements as above
-
-        } else {
-            // Load it up with dummy information if you don't find anything in the MovieEntry table
-            // This happens the first time the app is fired up, as it hasn't been populated yet.
-            Log.e(TAG, "Cursor returned no rows - populating with bogus information");
-            stock.setSymbol("bogus");
+        cursor.moveToFirst();
+        stock.setSymbol(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL)));
+        Log.e(TAG, "stock.getSymbol(): " + stock.getSymbol());
+        try {
+            while (cursor.moveToNext()) {
+                stock.setSymbol(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL)));
+                Log.e(TAG, "stock.getSymbol(): " + stock.getSymbol());
+            }
+        } finally {
+            cursor.close();
         }
-        Log.e(TAG, "stock.getSymbol() returns: " + stock.getSymbol());
-        cursor.close();
 
     }
 

@@ -85,13 +85,14 @@ public class StockFoxUtils {
                             jsonObject = resultsArray.getJSONObject(i);
                             Stock stock = new Stock(jsonObject);
                             if (stockIsValid(stock)){
+                                Log.e(TAG, "VALID: " + stock.getSymbol());
                                 ContentValues values = stockToContentValues(stock);
                                 Uri insertedUri = mContext.getContentResolver().insert(
                                         DatabaseContract.CONTENT_URI,
                                         values
                                 );
                             } else {
-                                Log.e(TAG, "stock is not valid");
+                                Log.e(TAG, "INVALID: " + stock.getSymbol());
                             }
                         }
                     }
