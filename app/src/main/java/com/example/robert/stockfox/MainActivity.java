@@ -10,18 +10,26 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.Toast;
-
 import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.PeriodicTask;
-import com.google.android.gms.gcm.Task;
+import android.support.v7.widget.RecyclerView;
+import com.melnykov.fab.FloatingActionButton;
+
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
     Context mContext;
     Boolean networkConnected;
     Intent mServiceIntent;
     Cursor mCursor;
+    QuoteCursorAdapter mCursorAdapter;
+    ItemTouchHelper mItemTouchHelper;
+
     private static final int CURSOR_LOADER_ID = 0;
 
     @Override
@@ -30,10 +38,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         String TAG = "MainActivity onCreate";
         mContext = this;
-//        insertTest();
-//        queryTest();
+
         // Check network connectivity
-        networkConnected = Utils.networkCheck(this);
+        networkConnected = GenericUtils.networkCheck(this);
 
         // Fire up the background thread
         mServiceIntent = new Intent(this, GenericIntentService.class);
@@ -42,10 +49,81 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             startService(mServiceIntent);
 
             // Setup periodic downloads
-            GcmNetworkManager.getInstance(this).schedule(Utils.buildPeriodicTask());
-        } else Utils.networkToast(this);
+            GcmNetworkManager.getInstance(this).schedule(GenericUtils.buildPeriodicTask());
+        } else GenericUtils.networkToast(this);
 
+        // Watch the database
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+
+        // Setup the UI
+        // Reference to recyclerView (in activity_my_stocks)
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        // Use the default implementation LinearLayoutManager
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mCursorAdapter = new QuoteCursorAdapter(this, null);
+        recyclerView.setAdapter(mCursorAdapter);
+
+        recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
+                new RecyclerViewItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View v, int position) {
+                        //TODO:
+                        // do something on item click
+                        Toast.makeText(mContext, "Clicked position: " + position, Toast.LENGTH_SHORT).show();
+                    }
+                }));
+
+        // Grab reference to FloatingActionButton
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        // Attach fab to RecyclerView TODO: Figure out why this is necessary.
+        fab.attachToRecyclerView(recyclerView);
+
+        // Listen for fab clicks
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                if (networkConnected){
+//                    new MaterialDialog.Builder(mContext).title(R.string.symbol_search)
+//                            .content(R.string.content_test)
+//                            .inputType(InputType.TYPE_CLASS_TEXT)
+//                            .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+//                                @Override public void onInput(MaterialDialog dialog, CharSequence input) {
+//                                    // On FAB click, receive user input. Make sure the stock doesn't already exist
+//                                    // in the DB and proceed accordingly
+//                                    Cursor c = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
+//                                            new String[] { QuoteColumns.SYMBOL }, QuoteColumns.SYMBOL + "= ?",
+//                                            new String[] { input.toString() }, null);
+//                                    if (c.getCount() != 0) {
+//                                        Toast toast =
+//                                                Toast.makeText(MyStocksActivity.this, "This stock is already saved!",
+//                                                        Toast.LENGTH_LONG);
+//                                        toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
+//                                        toast.show();
+//                                        return;
+//                                    } else {
+//                                        // Add the stock to DB
+//                                        mServiceIntent.putExtra("tag", "add");
+//                                        mServiceIntent.putExtra("symbol", input.toString());
+//                                        startService(mServiceIntent);
+//                                    }
+//                                }
+//                            })
+//                            .show();
+                    Toast.makeText(mContext, "Add button clicked", Toast.LENGTH_LONG).show();
+                } else {
+                    networkToast();
+                }
+
+            }
+        });
+
+        // Enable listening for swipe events - essentially an advanced onClickListener
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mCursorAdapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+
+        // attach listener to recyclerView to handle swipes
+        mItemTouchHelper.attachToRecyclerView(recyclerView);
 
     }
 
@@ -118,22 +196,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data){
         // This is the result of the database query - pass data to where ever.
         String TAG = "onLoadFinished()";
-        // mCursorAdapter.swapCursor(data);
+        mCursorAdapter.swapCursor(data);
         mCursor = data;
 
-//        Stock stock = new Stock();
-//
-//        data.moveToFirst();
-//        stock.setSymbol(data.getString(data.getColumnIndex(DatabaseContract.StockTable.SYMBOL)));
-//        Log.e(TAG, "stock.getSymbol(): " + stock.getSymbol());
-//        try {
-//            while (data.moveToNext()) {
-//                stock.setSymbol(data.getString(data.getColumnIndex(DatabaseContract.StockTable.SYMBOL)));
-//                Log.e(TAG, "stock.getSymbol(): " + stock.getSymbol());
-//            }
-//        } finally {
-//            // data.close();
-//        }
+        Stock stock = new Stock();
+
+        Log.e(TAG, "mCursor.getCount(): " + mCursor.getCount());
 
     }
 
@@ -141,6 +209,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader){
         String TAG = "onLoaderReset()";
         Log.e(TAG, "onLoaderReset called");
-        // mCursorAdapter.swapCursor(null);
+        mCursorAdapter.swapCursor(null);
     }
 }

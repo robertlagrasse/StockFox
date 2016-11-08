@@ -12,9 +12,13 @@ import com.google.android.gms.gcm.Task;
 
 /**
  * Created by robert on 11/3/16.
+ *
+ * These class contains utility methods for general framework operations. Project specific
+ * utilities belong in a project specific utility class, not here.
+ *
  */
 
-public class Utils {
+public class GenericUtils {
 
     public static Boolean networkCheck(Context context){
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
