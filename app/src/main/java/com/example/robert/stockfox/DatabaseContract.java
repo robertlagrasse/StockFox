@@ -136,10 +136,11 @@ class DatabaseContract {
         static final String DIVIDENDYIELD                                    = "DividendYield";
         static final String PERCENTCHANGE                                    = "PercentChange";
 
+
         // Handy string array for when you need to refer to all columns
         public static final String[] STOCK_ALL_KEYS = new String[] {
-                _ID,
                 SYMBOL,
+                _ID,
                 ASK,
                 AVERAGEDAILYVOLUME,
                 BID,
@@ -222,6 +223,92 @@ class DatabaseContract {
                 STOCKEXCHANGE,
                 DIVIDENDYIELD,
                 PERCENTCHANGE};
+
+        public static final String STOCK_ALL_KEYS_STRING =
+                SYMBOL + ","+
+                        _ID + ","+
+                        ASK + ","+
+                        AVERAGEDAILYVOLUME + ","+
+                        BID + ","+
+                        ASKREALTIME + ","+
+                        BIDREALTIME + ","+
+                        BOOKVALUE + ","+
+                        CHANGE_PERCENTCHANGE + ","+
+                        CHANGE + ","+
+                        COMMISSION + ","+
+                        CURRENCY + ","+
+                        CHANGEREALTIME + ","+
+                        AFTERHOURSCHANGEREALTIME + ","+
+                        DIVIDENDSHARE + ","+
+                        LASTTRADEDATE + ","+
+                        TRADEDATE + ","+
+                        EARNINGSSHARE + ","+
+                        ERRORINDICATIONRETURNEDFORSYMBOLCHANGEDINVALID + ","+
+                        EPSESTIMATECURRENTYEAR + ","+
+                        EPSESTIMATENEXTYEAR + ","+
+                        EPSESTIMATENEXTQUARTER + ","+
+                        DAYSLOW + ","+
+                        DAYSHIGH + ","+
+                        YEARLOW + ","+
+                        YEARHIGH + ","+
+                        HOLDINGSGAINPERCENT + ","+
+                        ANNUALIZEDGAIN + ","+
+                        HOLDINGSGAIN + ","+
+                        HOLDINGSGAINPERCENTREALTIME + ","+
+                        HOLDINGSGAINREALTIME + ","+
+                        MOREINFO + ","+
+                        ORDERBOOKREALTIME + ","+
+                        MARKETCAPITALIZATION + ","+
+                        MARKETCAPREALTIME + ","+
+                        EBITDA + ","+
+                        CHANGEFROMYEARLOW + ","+
+                        PERCENTCHANGEFROMYEARLOW + ","+
+                        LASTTRADEREALTIMEWITHTIME + ","+
+                        CHANGEPERCENTREALTIME + ","+
+                        CHANGEFROMYEARHIGH + ","+
+                        PERCEBTCHANGEFROMYEARHIGH + ","+
+                        LASTTRADEWITHTIME + ","+
+                        LASTTRADEPRICEONLY + ","+
+                        HIGHLIMIT + ","+
+                        LOWLIMIT + ","+
+                        DAYSRANGE + ","+
+                        DAYSRANGEREALTIME + ","+
+                        FIFTYDAYMOVINGAVERAGE + ","+
+                        TWOHUNDREDDAYMOVINGAVERAGE + ","+
+                        CHANGEFROMTWOHUNDREDDAYMOVINGAVERAGE + ","+
+                        PERCENTCHANGEFROMTWOHUNDREDDAYMOVINGAVERAGE + ","+
+                        CHANGEFROMFIFTYDAYMOVINGAVERAGE + ","+
+                        PERCENTCHANGEFROMFIFTYDAYMOVINGAVERAGE + ","+
+                        NAME + ","+
+                        NOTES + ","+
+                        OPEN + ","+
+                        PREVIOUSCLOSE + ","+
+                        PRICEPAID + ","+
+                        CHANGEINPERCENT + ","+
+                        PRICESALES + ","+
+                        PRICEBOOK + ","+
+                        EXDIVIDENDDATE + ","+
+                        PERATIO + ","+
+                        DIVIDENDPAYDATE + ","+
+                        PERATIOREALTIME + ","+
+                        PEGRATIO + ","+
+                        PRICEEPSESTIMATECURRENTYEAR + ","+
+                        PRICEEPSESTIMATENEXTYEAR + ","+
+                        SYMBOL + ","+
+                        SHARESOWNED + ","+
+                        SHORTRATIO + ","+
+                        LASTTRADETIME + ","+
+                        TICKERTREND + ","+
+                        ONEYRTARGETPRICE + ","+
+                        VOLUME + ","+
+                        HOLDINGSVALUE + ","+
+                        HOLDINGSVALUEREALTIME + ","+
+                        YEARRANGE + ","+
+                        DAYSVALUECHANGE + ","+
+                        DAYSVALUECHANGEREALTIME + ","+
+                        STOCKEXCHANGE + ","+
+                        DIVIDENDYIELD + ","+
+                        PERCENTCHANGE;
 
         // SQL Create table command
         static final String CREATE_TABLE               =
@@ -310,6 +397,6 @@ class DatabaseContract {
                         STOCKEXCHANGE + VARCHAR_255 +
                         DIVIDENDYIELD + VARCHAR_255 +
                         PERCENTCHANGE + VARCHAR_255 +
-                        "UNIQUE ("+ SYMBOL +") ON CONFLICT REPLACE);";
+                        "UNIQUE ("+ _ID +") ON CONFLICT IGNORE);";
     }
 }

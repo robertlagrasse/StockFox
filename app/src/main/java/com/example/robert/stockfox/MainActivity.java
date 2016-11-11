@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,8 @@ import android.view.View;
 import android.widget.Toast;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import android.support.v7.widget.RecyclerView;
+
+import com.google.android.gms.gcm.TaskParams;
 import com.melnykov.fab.FloatingActionButton;
 
 
@@ -46,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mServiceIntent = new Intent(this, GenericIntentService.class);
         if (networkConnected) {
             // Setup a download service on the background thread
+            String symbol = null;
+            mServiceIntent.putExtra(DatabaseContract.StockTable.SYMBOL, symbol);
             startService(mServiceIntent);
 
             // Setup periodic downloads
@@ -69,8 +74,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 new RecyclerViewItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View v, int position) {
                         //TODO:
-                        // do something on item click
                         Toast.makeText(mContext, "Clicked position: " + position, Toast.LENGTH_SHORT).show();
+                        mCursor.moveToPosition(position);
+                        String symbol = mCursor.getString(mCursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
+                        String id = mCursor.getString(mCursor.getColumnIndex(DatabaseContract.StockTable._ID));
+                        Log.e("RecyclerView", "Position: " + position + " Symbol: " + symbol + " ID: " + id);
                     }
                 }));
 
@@ -84,33 +92,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         fab.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 if (networkConnected){
-//                    new MaterialDialog.Builder(mContext).title(R.string.symbol_search)
-//                            .content(R.string.content_test)
-//                            .inputType(InputType.TYPE_CLASS_TEXT)
-//                            .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
-//                                @Override public void onInput(MaterialDialog dialog, CharSequence input) {
-//                                    // On FAB click, receive user input. Make sure the stock doesn't already exist
-//                                    // in the DB and proceed accordingly
-//                                    Cursor c = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
-//                                            new String[] { QuoteColumns.SYMBOL }, QuoteColumns.SYMBOL + "= ?",
-//                                            new String[] { input.toString() }, null);
-//                                    if (c.getCount() != 0) {
-//                                        Toast toast =
-//                                                Toast.makeText(MyStocksActivity.this, "This stock is already saved!",
-//                                                        Toast.LENGTH_LONG);
-//                                        toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
-//                                        toast.show();
-//                                        return;
-//                                    } else {
-//                                        // Add the stock to DB
-//                                        mServiceIntent.putExtra("tag", "add");
-//                                        mServiceIntent.putExtra("symbol", input.toString());
-//                                        startService(mServiceIntent);
-//                                    }
-//                                }
-//                            })
-//                            .show();
                     Toast.makeText(mContext, "Add button clicked", Toast.LENGTH_LONG).show();
+                    Intent tmpServiceIntent = new Intent(mContext, GenericIntentService.class);
+                    tmpServiceIntent.putExtra(DatabaseContract.StockTable.SYMBOL, "CXW");
+                    startService(tmpServiceIntent);
+
                 } else {
                     networkToast();
                 }
@@ -185,8 +171,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         String TAG = "onCreateLoader";
         Log.e(TAG, "onCreateLoader called");
         // This is the database query
-        return new CursorLoader(this, DatabaseContract.CONTENT_URI,
-                null,
+        return new CursorLoader(this, DatabaseContract.CONTENT_URI.buildUpon().appendPath("UI").build(),
+                DatabaseContract.StockTable.STOCK_ALL_KEYS,
                 null,
                 null,
                 null);

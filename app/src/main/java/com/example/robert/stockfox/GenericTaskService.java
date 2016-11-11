@@ -1,6 +1,9 @@
 package com.example.robert.stockfox;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.os.Bundle;
 import android.util.Log;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
@@ -43,8 +46,19 @@ public class GenericTaskService extends GcmTaskService{
         // Fetch the data
         // Send the data to a method in project specific utility class for processing.
 
+        String stockInput = null;
 
-        Log.e(TAG, "onRunTask started");
+
+        if (params.getTag().equals("periodic")) {
+            stockInput=null;
+            Log.e(TAG, "periodic task ");
+        } else{
+            // This was started by the intent Service
+            stockInput = params.getExtras().getString(DatabaseContract.StockTable.SYMBOL);
+            Log.e(TAG, "params.toString(): " + params.toString());
+        }
+
+        // Log.e(TAG, "stockInput = " + stockInput);
 
         if (mContext == null){
             mContext = this;
@@ -55,7 +69,7 @@ public class GenericTaskService extends GcmTaskService{
         int result = GcmNetworkManager.RESULT_FAILURE;
 
         // Build URL
-        urlString = StockFoxUtils.buildURLasString();
+        urlString = StockFoxUtils.buildURLasString(mContext, stockInput);
 
         // Fetch Data
         if (urlString != null){

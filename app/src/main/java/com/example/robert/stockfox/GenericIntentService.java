@@ -25,7 +25,20 @@ public class GenericIntentService extends IntentService {
     @Override protected void onHandleIntent(Intent intent) {
         Bundle args = new Bundle();
 
+        // Build the intent
         GenericTaskService genericTaskService = new GenericTaskService(this);
-        genericTaskService.onRunTask(new TaskParams(intent.getStringExtra("some-tag"), args));
+
+        String symbol = intent.getStringExtra(DatabaseContract.StockTable.SYMBOL);
+        if (symbol == null){
+            Log.e(TAG, "intent.getStringExtra(DatabaseContract.StockTable.SYMBOL) was null");
+        }else {
+            Log.e(TAG, "symbol = " + symbol);
+        }
+
+        // Populate the intent
+        args.putString(DatabaseContract.StockTable.SYMBOL, symbol);
+
+        // Launch the intent
+        genericTaskService.onRunTask(new TaskParams("pass", args));
     }
 }

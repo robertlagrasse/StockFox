@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -30,6 +31,8 @@ public class DatabaseContentProvider extends ContentProvider{
 
     private static final int    ALL_STOCKS          = 0;
     private static final int    ONE_STOCK           = 1;
+    private static final int    UI_UPDATE           = 2;
+
 
     private static final UriMatcher uriMatcher = getUriMatcher();
 
@@ -37,6 +40,8 @@ public class DatabaseContentProvider extends ContentProvider{
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks", ALL_STOCKS);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/symbol/*", ONE_STOCK);
+        uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/UI", UI_UPDATE);
+
 
         return uriMatcher;
     }
@@ -54,6 +59,35 @@ public class DatabaseContentProvider extends ContentProvider{
                         String sortOrder) {
 
         Log.e(TAG, "query() URI: " + uri.toString());
+        /*
+        Cursor query (Uri uri,
+                String[] projection,
+                String selection,
+                String[] selectionArgs,
+                String sortOrder)
+        Query the given URI, returning a Cursor over the result set.
+
+        For best performance, the caller should follow these guidelines:
+
+        Provide an explicit projection, to prevent reading
+        data from storage that aren't going to be used.
+
+        Use question mark parameter markers such as 'phone=?' instead of explicit values in the
+        selection parameter, so that queries that differ only by those values will be recognized
+        as the same for caching purposes.
+
+        Parameters
+        ----------
+        uri	Uri: The URI, using the content:// scheme, for the content to retrieve.
+        projection	String: A list of which columns to return. Passing null will return all columns, which is inefficient.
+        selection	String: A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE itself). Passing null will return all rows for the given URI.
+        selectionArgs	String: You may include ?s in selection, which will be replaced by the values from selectionArgs, in the order that they appear in the selection. The values will be bound as Strings.
+        sortOrder	String: How to order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself). Passing null will use the default sort order, which may be unordered.
+
+         */
+
+        // Here's the switch statement that, given a URI, will determine what kind of request it is,
+        // and query the database accordingly.
 
         Cursor retCursor;
         switch (getUriMatcher().match(uri)) {
@@ -67,16 +101,10 @@ public class DatabaseContentProvider extends ContentProvider{
                         selectionArgs,
                         null,
                         null,
-                        null
+                        DatabaseContract.StockTable._ID + " DESC"
                 );
                 break;
             }
-
-            // One Movie would be requested by the DisplayFragment, currently a stand alone
-            // We'll need title, release date, poster path, background path, rating
-            // and description. This will probably end up a string array in the db contract.
-            // for now, I just want it off the ground.
-
             case ONE_STOCK: {
                 Log.e(TAG, "query() ONE_STOCK");
                 String stockSymbol = uri.getPathSegments().get(2);
@@ -91,8 +119,19 @@ public class DatabaseContentProvider extends ContentProvider{
                 );
                 break;
             }
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+            case UI_UPDATE: {
+                Log.e(TAG, "query() UI_UPDATE");
+                Log.e(TAG, DatabaseContract.StockTable.STOCK_ALL_KEYS_STRING);
+                retCursor = databaseManager.getReadableDatabase().rawQuery(
+                        "SELECT " + DatabaseContract.StockTable.STOCK_ALL_KEYS_STRING +
+                        ", MAX(" + DatabaseContract.StockTable._ID + ")" +
+                        " FROM " + DatabaseContract.StockTable.TABLE_NAME +
+                        " GROUP BY " + DatabaseContract.StockTable.SYMBOL,
+                        null);
+                break;
+            }
+                default:
+                    throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;

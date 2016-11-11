@@ -3,6 +3,8 @@ package com.example.robert.stockfox;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.util.Log;
 
@@ -22,10 +24,13 @@ import java.util.ArrayList;
 
 public class StockFoxUtils {
 
-    public static String buildURLasString(){
+    public static String buildURLasString(Context mContext, String addSymbol){
         String TAG = "buildURLasString()";
         String urlString;
         StringBuilder urlStringBuilder = new StringBuilder();
+        StringBuilder mStoredSymbols = new StringBuilder();
+
+        // Start with the base of the URL
         try{
             // Base URL for the Yahoo query
             urlStringBuilder.append("https://query.yahooapis.com/v1/public/yql?q=");
@@ -35,15 +40,68 @@ public class StockFoxUtils {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        try {
-            urlStringBuilder.append(
-            URLEncoder.encode("\"YHOO\",\"AAPL\",\"FARK\",\"MSFT\")", "UTF-8"));
 
-            // See what the request URL looks like now
+        // Check the database. Grab the unique symbols.
+        Cursor initQueryCursor;
+        initQueryCursor = mContext.getContentResolver().query(DatabaseContract.CONTENT_URI,
+                new String[] { "Distinct " + DatabaseContract.StockTable.SYMBOL },
+                null,
+                null,
+                null);
+
+
+        if (initQueryCursor != null) {
+            initQueryCursor.moveToFirst();
+            for (int i = 0; i < initQueryCursor.getCount(); i++){
+                // Append each symbol found by the cursor, surrounded by quotes, to StringBuilder mStoredSymbols
+                mStoredSymbols.append("\""+
+                        initQueryCursor.getString(initQueryCursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL))+"\",");
+                initQueryCursor.moveToNext();
+            }
+            initQueryCursor.close();
+        }
+
+        Log.e(TAG, "Following DB query, mStoredSymbols.toString(): " + mStoredSymbols.toString());
+
+        // Add in whatever was passed in if !null
+        if (addSymbol != null){
+            mStoredSymbols.append("\"" + addSymbol + "\",");
+        }
+
+        Log.e(TAG, "Following addition of passed Symbol, mStoredSymbols.toString(): " + mStoredSymbols.toString());
+        Log.e(TAG, "mStoredSymbols.toString().length(): " + + mStoredSymbols.toString().length());
+
+        // If nothing was passed or in the DB, use these defaults
+        if (mStoredSymbols.toString().length() == 0){
+            mStoredSymbols.append("\"YHOO\",\"AAPL\",\"MSFT\",");
+        }
+
+        Log.e(TAG, "After the default check, mStoredSymbols.toString(): " + mStoredSymbols.toString());
+        Log.e(TAG, "mStoredSymbols.toString().length(): " + + mStoredSymbols.toString().length());
+
+        // Finalize symbol picks
+        mStoredSymbols.replace(mStoredSymbols.length() - 1, mStoredSymbols.length(), ")");
+
+        Log.e(TAG, "After finalization, mStoredSymbols = " + mStoredSymbols.toString());
+        try {
+            // add mStoredSymbols to the urlStringBuilder
+            urlStringBuilder.append(URLEncoder.encode(mStoredSymbols.toString(), "UTF-8"));
             Log.e(TAG, "urlStringBuilder = " + urlStringBuilder.toString());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        // If there isn't anything in the db, and there wasn't anything passed in, use defaults
+
+//        try {
+//            urlStringBuilder.append(
+//            URLEncoder.encode("\"YHOO\",\"AAPL\",\"FARK\",\"MSFT\")", "UTF-8"));
+//
+//            // See what the request URL looks like now
+//            Log.e(TAG, "urlStringBuilder = " + urlStringBuilder.toString());
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+
         // finalize the URL for the API query.
         urlStringBuilder.append("&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables."
                 + "org%2Falltableswithkeys&callback=");
