@@ -73,12 +73,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
                 new RecyclerViewItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View v, int position) {
-                        //TODO:
-                        Toast.makeText(mContext, "Clicked position: " + position, Toast.LENGTH_SHORT).show();
                         mCursor.moveToPosition(position);
                         String symbol = mCursor.getString(mCursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
                         String id = mCursor.getString(mCursor.getColumnIndex(DatabaseContract.StockTable._ID));
                         Log.e("RecyclerView", "Position: " + position + " Symbol: " + symbol + " ID: " + id);
+                        Intent tmpServiceIntent = new Intent(mContext, GenericDetailActivity.class);
+                        tmpServiceIntent.putExtra(DatabaseContract.StockTable._ID, id);
+                        startActivity(tmpServiceIntent);
                     }
                 }));
 

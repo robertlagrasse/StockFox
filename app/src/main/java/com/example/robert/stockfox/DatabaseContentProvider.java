@@ -32,6 +32,7 @@ public class DatabaseContentProvider extends ContentProvider{
     private static final int    ALL_STOCKS          = 0;
     private static final int    ONE_STOCK           = 1;
     private static final int    UI_UPDATE           = 2;
+    private static final int    ONE_ID              = 3;
 
 
     private static final UriMatcher uriMatcher = getUriMatcher();
@@ -41,6 +42,8 @@ public class DatabaseContentProvider extends ContentProvider{
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks", ALL_STOCKS);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/symbol/*", ONE_STOCK);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/UI", UI_UPDATE);
+        uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/#", ONE_ID);
+
 
 
         return uriMatcher;
@@ -113,6 +116,20 @@ public class DatabaseContentProvider extends ContentProvider{
                         projection,
                         DatabaseContract.StockTable.SYMBOL + " = ?",
                         new String[]{stockSymbol},
+                        null,
+                        null,
+                        null
+                );
+                break;
+            }
+            case ONE_ID: {
+                Log.e(TAG, "query() ONE_ID");
+                String id = uri.getPathSegments().get(1);
+                retCursor = databaseManager.getReadableDatabase().query(
+                        DatabaseContract.StockTable.TABLE_NAME,
+                        projection,
+                        DatabaseContract.StockTable._ID + " = ?",
+                        new String[]{id},
                         null,
                         null,
                         null
