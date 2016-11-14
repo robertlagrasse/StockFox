@@ -1,5 +1,7 @@
 package com.example.robert.stockfox;
 
+import android.database.Cursor;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -94,6 +96,93 @@ public class Stock {
     private String StockExchange;
     private String DividendYield;
     private String PercentChange;
+
+    public Stock(Cursor cursor){
+        cursor.moveToFirst();
+        symbol = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL)));
+        Ask = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.ASK)));
+        AverageDailyVolume = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.AVERAGEDAILYVOLUME)));
+        Bid = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.BID)));
+        AskRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.ASKREALTIME)));
+        BidRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.BIDREALTIME)));
+        BookValue = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.BOOKVALUE)));
+        Change_PercentChange = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGE_PERCENTCHANGE)));
+        Change = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGE)));
+        Commission = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.COMMISSION)));
+        Currency = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CURRENCY)));
+        ChangeRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGEREALTIME)));
+        AfterHoursChangeRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.AFTERHOURSCHANGEREALTIME)));
+        DividendShare = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.DIVIDENDSHARE)));
+        LastTradeDate = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.LASTTRADEDATE)));
+        TradeDate = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.TRADEDATE)));
+        EarningsShare = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.EARNINGSSHARE)));
+        ErrorIndicationreturnedforsymbolchangedinvalid = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.ERRORINDICATIONRETURNEDFORSYMBOLCHANGEDINVALID)));
+        EPSEstimateCurrentYear = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.EPSESTIMATECURRENTYEAR)));
+        EPSEstimateNextYear = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.EPSESTIMATENEXTYEAR)));
+        EPSEstimateNextQuarter = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.EPSESTIMATENEXTQUARTER)));
+        DaysLow = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.DAYSLOW)));
+        DaysHigh = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.DAYSHIGH)));
+        YearLow = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.YEARLOW)));
+        YearHigh = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.YEARHIGH)));
+        HoldingsGainPercent = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.HOLDINGSGAINPERCENT)));
+        AnnualizedGain = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.ANNUALIZEDGAIN)));
+        HoldingsGain = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.HOLDINGSGAIN)));
+        HoldingsGainPercentRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.HOLDINGSGAINPERCENTREALTIME)));
+        HoldingsGainRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.HOLDINGSGAINREALTIME)));
+        MoreInfo = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.MOREINFO)));
+        OrderBookRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.ORDERBOOKREALTIME)));
+        MarketCapitalization = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.MARKETCAPITALIZATION)));
+        MarketCapRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.MARKETCAPREALTIME)));
+        EBITDA = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.EBITDA)));
+        ChangeFromYearLow = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGEFROMYEARLOW)));
+        PercentChangeFromYearLow = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PERCENTCHANGEFROMYEARLOW)));
+        LastTradeRealtimeWithTime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.LASTTRADEREALTIMEWITHTIME)));
+        ChangePercentRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGEPERCENTREALTIME)));
+        ChangeFromYearHigh = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGEFROMYEARHIGH)));
+        PercebtChangeFromYearHigh = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PERCEBTCHANGEFROMYEARHIGH)));
+        LastTradeWithTime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.LASTTRADEWITHTIME)));
+        LastTradePriceOnly = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.LASTTRADEPRICEONLY)));
+        HighLimit = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.HIGHLIMIT)));
+        LowLimit = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.LOWLIMIT)));
+        DaysRange = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.DAYSRANGE)));
+        DaysRangeRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.DAYSRANGEREALTIME)));
+        FiftydayMovingAverage = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.FIFTYDAYMOVINGAVERAGE)));
+        TwoHundreddayMovingAverage = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.TWOHUNDREDDAYMOVINGAVERAGE)));
+        ChangeFromTwoHundreddayMovingAverage = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGEFROMTWOHUNDREDDAYMOVINGAVERAGE)));
+        PercentChangeFromTwoHundreddayMovingAverage = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PERCENTCHANGEFROMTWOHUNDREDDAYMOVINGAVERAGE)));
+        ChangeFromFiftydayMovingAverage = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGEFROMFIFTYDAYMOVINGAVERAGE)));
+        PercentChangeFromFiftydayMovingAverage = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PERCENTCHANGEFROMFIFTYDAYMOVINGAVERAGE)));
+        Name = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.NAME)));
+        Notes = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.NOTES)));
+        Open = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.OPEN)));
+        PreviousClose = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PREVIOUSCLOSE)));
+        PricePaid = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PRICEPAID)));
+        ChangeinPercent = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGEINPERCENT)));
+        PriceSales = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PRICESALES)));
+        PriceBook = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PRICEBOOK)));
+        ExDividendDate = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.EXDIVIDENDDATE)));
+        PERatio = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PERATIO)));
+        DividendPayDate = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.DIVIDENDPAYDATE)));
+        PERatioRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PERATIOREALTIME)));
+        PEGRatio = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PEGRATIO)));
+        PriceEPSEstimateCurrentYear = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PRICEEPSESTIMATECURRENTYEAR)));
+        PriceEPSEstimateNextYear = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PRICEEPSESTIMATENEXTYEAR)));
+        SharesOwned = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.SHARESOWNED)));
+        ShortRatio = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.SHORTRATIO)));
+        LastTradeTime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.LASTTRADETIME)));
+        TickerTrend = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.TICKERTREND)));
+        OneyrTargetPrice = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.ONEYRTARGETPRICE)));
+        Volume = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.VOLUME)));
+        HoldingsValue = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.HOLDINGSVALUE)));
+        HoldingsValueRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.HOLDINGSVALUEREALTIME)));
+        YearRange = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.YEARRANGE)));
+        DaysValueChange = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.DAYSVALUECHANGE)));
+        DaysValueChangeRealtime = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.DAYSVALUECHANGEREALTIME)));
+        StockExchange = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.STOCKEXCHANGE)));
+        DividendYield = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.DIVIDENDYIELD)));
+        PercentChange = (cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PERCENTCHANGE)));
+        cursor.close();
+    }
 
     public Stock(JSONObject jsonObject) throws JSONException {
         symbol = jsonObject.getString("symbol");

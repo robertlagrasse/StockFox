@@ -33,6 +33,7 @@ public class DatabaseContentProvider extends ContentProvider{
     private static final int    ONE_STOCK           = 1;
     private static final int    UI_UPDATE           = 2;
     private static final int    ONE_ID              = 3;
+    private static final int    UI_GRAPH            = 4;
 
 
     private static final UriMatcher uriMatcher = getUriMatcher();
@@ -43,6 +44,7 @@ public class DatabaseContentProvider extends ContentProvider{
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/symbol/*", ONE_STOCK);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/UI", UI_UPDATE);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/#", ONE_ID);
+        uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/graph/*", UI_GRAPH);
 
 
 
@@ -144,6 +146,19 @@ public class DatabaseContentProvider extends ContentProvider{
                         ", MAX(" + DatabaseContract.StockTable._ID + ")" +
                         " FROM " + DatabaseContract.StockTable.TABLE_NAME +
                         " GROUP BY " + DatabaseContract.StockTable.SYMBOL,
+                        null);
+                break;
+            }
+            case UI_GRAPH: {
+                Log.e(TAG, "query() UI_GRAPH");
+                String stockSymbol = uri.getPathSegments().get(2);
+                Log.e(TAG, DatabaseContract.StockTable.STOCK_ALL_KEYS_STRING);
+                retCursor = databaseManager.getReadableDatabase().rawQuery(
+                        "SELECT " + DatabaseContract.StockTable.STOCK_ALL_KEYS_STRING +
+                                ", MAX(" + DatabaseContract.StockTable._ID + ")" +
+                                " FROM " + DatabaseContract.StockTable.TABLE_NAME +
+                                " WHERE " + DatabaseContract.StockTable.SYMBOL + " = \"" + stockSymbol + "\"" +
+                                " GROUP BY " + DatabaseContract.StockTable.LASTTRADEDATE,
                         null);
                 break;
             }
