@@ -96,27 +96,25 @@ public class GenericDetailFragment extends Fragment {
         GraphView graphView = (GraphView) rootView.findViewById(R.id.graph);
 
         DataPoint[] dataPoints = new DataPoint[cursor.getCount()*2];
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        double graphStartDate = 0;
+        double graphEndDate = 0;
 
         if (cursor != null) {
             cursor.moveToFirst();
+            int element = 0;
             for (int x = 0; x < cursor.getCount(); x++){
-                int valuePosition = ((x+1)*2)-2;
                 // Append each symbol found by the cursor, surrounded by quotes, to StringBuilder mStoredSymbols
                 String open = cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.OPEN));
                 String close = cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.BID));
                 String openDate = cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.LASTTRADEDATE)) + " 00:00:00";
                 String closeDate = cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.LASTTRADEDATE)) + " 12:00:00";
 
-                DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
                 try {
                     Date startDate = dateFormat.parse(openDate);
                     Date endDate = dateFormat.parse(closeDate);
-                    DataPoint value = new DataPoint(startDate, Double.parseDouble(open));
-                    dataPoints[valuePosition] = value;
-                    valuePosition++;
-                    value = new DataPoint(endDate, Double.parseDouble(close));
-                    dataPoints[valuePosition] = value;
-
+                    dataPoints[element++] = new DataPoint(startDate, Double.parseDouble(open));
+                    dataPoints[element++] = new DataPoint(endDate, Double.parseDouble(close));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -124,6 +122,9 @@ public class GenericDetailFragment extends Fragment {
             }
             cursor.close();
         }
+        graphStartDate = dataPoints[0].getX();
+        graphEndDate = dataPoints[dataPoints.length-1].getX();
+        Log.e(TAG, "graphStartDate: " + graphStartDate + " graphEndDate: " + graphEndDate);
 
         LineGraphSeries series = new LineGraphSeries<DataPoint>(dataPoints);
         graphView.addSeries(series);
