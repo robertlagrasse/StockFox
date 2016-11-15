@@ -23,9 +23,11 @@ import android.support.v7.widget.RecyclerView;
 
 import com.google.android.gms.gcm.TaskParams;
 import com.melnykov.fab.FloatingActionButton;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     Context mContext;
     Boolean networkConnected;
     Intent mServiceIntent;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String TAG = "MainActivity onCreate";
+        final String TAG = "MainActivity onCreate";
         mContext = this;
 
         // Check network connectivity
@@ -72,7 +74,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
                 new RecyclerViewItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View v, int position) {
+                    @Override
+                    public void onItemClick(View v, int position) {
                         mCursor.moveToPosition(position);
                         String symbol = mCursor.getString(mCursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
                         String id = mCursor.getString(mCursor.getColumnIndex(DatabaseContract.StockTable._ID));
@@ -91,13 +94,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // Listen for fab clicks
         fab.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                if (networkConnected){
-                    Toast.makeText(mContext, "Add button clicked", Toast.LENGTH_LONG).show();
-                    Intent tmpServiceIntent = new Intent(mContext, GenericIntentService.class);
-                    tmpServiceIntent.putExtra(DatabaseContract.StockTable.SYMBOL, "CXW");
-                    startService(tmpServiceIntent);
-
+            @Override
+            public void onClick(View v) {
+                if (networkConnected) {
+                    new MaterialDialog.Builder(mContext).title(R.string.symbol_search)
+                            .content(R.string.content_test)
+                            .inputType(InputType.TYPE_CLASS_TEXT)
+                            .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+                                @Override
+                                public void onInput(MaterialDialog dialog, CharSequence input) {
+                                    Intent tmpServiceIntent = new Intent(mContext, GenericIntentService.class);
+                                    tmpServiceIntent.putExtra(DatabaseContract.StockTable.SYMBOL, input.toString().toUpperCase());
+                                    startService(tmpServiceIntent);
+                                }
+                            })
+                            .show();
                 } else {
                     networkToast();
                 }
@@ -114,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    public void insertTest(){
+    public void insertTest() {
         String TAG = "insertTest()";
 
         ContentValues values = new ContentValues();
@@ -131,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.e(TAG, "Returned URI: " + insertedUri.toString());
     }
 
-    public void queryTest(){
+    public void queryTest() {
         String TAG = "queryTest()";
 
         Cursor cursor;
@@ -162,13 +173,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    public void networkToast(){
+    public void networkToast() {
         Toast.makeText(mContext, getString(R.string.network_toast), Toast.LENGTH_SHORT).show();
         Log.e("networkToast()", "network is dead!");
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args){
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String TAG = "onCreateLoader";
         Log.e(TAG, "onCreateLoader called");
         // This is the database query
@@ -180,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data){
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // This is the result of the database query - pass data to where ever.
         String TAG = "onLoadFinished()";
         mCursorAdapter.swapCursor(data);
@@ -193,9 +204,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader){
+    public void onLoaderReset(Loader<Cursor> loader) {
         String TAG = "onLoaderReset()";
         Log.e(TAG, "onLoaderReset called");
         mCursorAdapter.swapCursor(null);
+    }
+
+
+    @Override
+    public void onResume() {
+        String TAG = "onResume";
+        Log.e(TAG, "onResume() called");
+        super.onResume();
+        getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+        if (!networkConnected) networkToast();
     }
 }

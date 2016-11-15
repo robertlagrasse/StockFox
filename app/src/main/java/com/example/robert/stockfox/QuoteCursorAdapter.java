@@ -73,9 +73,8 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         Cursor c = getCursor();
         c.moveToPosition(position);
         String symbol = c.getString(c.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
-        //mContext.getContentResolver().delete(QuoteProvider.Quotes.withSymbol(symbol), null, null);
-        //notifyItemRemoved(position);
-        Toast.makeText(mContext, "Swiped! " + symbol, Toast.LENGTH_LONG).show();
+        mContext.getContentResolver().delete(DatabaseContract.CONTENT_URI.buildUpon().appendPath("symbol").appendPath(symbol).build(), null, null);
+        notifyItemRemoved(position);
     }
 
     @Override public int getItemCount() {

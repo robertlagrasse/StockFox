@@ -1,10 +1,9 @@
 package com.example.robert.stockfox;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
@@ -15,6 +14,9 @@ import java.io.IOException;
 
 /**
  * Created by robert on 11/3/16.
+ *
+ * The GenericTaskService runs on a background thread. It can be kicked off by a periodic task,
+ * or by Intent.
  */
 
 public class GenericTaskService extends GcmTaskService{
@@ -42,36 +44,25 @@ public class GenericTaskService extends GcmTaskService{
 
     @Override
     public int onRunTask(TaskParams params) {
-        // Build the URL string using method in project specific utility class StockFoxUtils
-        // Fetch the data
-        // Send the data to a method in project specific utility class for processing.
-
-        String stockInput = null;
-
-
-        if (params.getTag().equals("periodic")) {
-            stockInput=null;
-            Log.e(TAG, "periodic task ");
-        } else{
-            // This was started by the intent Service
-            stockInput = params.getExtras().getString(DatabaseContract.StockTable.SYMBOL);
-            Log.e(TAG, "params.toString(): " + params.toString());
-        }
-
-        // Log.e(TAG, "stockInput = " + stockInput);
-
         if (mContext == null){
             mContext = this;
         }
-
+        String stockInput = null;
         String urlString;
-        String getResponse = "no data";
+        String getResponse = null;
         int result = GcmNetworkManager.RESULT_FAILURE;
 
-        // Build URL
+        if (params.getTag().equals("periodic")) {
+            stockInput=null;
+        } else{
+            stockInput = params.getExtras().getString(DatabaseContract.StockTable.SYMBOL);
+        }
+
+
+        // Build URL to identify target data source
         urlString = StockFoxUtils.buildURLasString(mContext, stockInput);
 
-        // Fetch Data
+        // Fetch Data from target data source
         if (urlString != null){
             try{
                 // Go grab the data specified in the URL
@@ -83,10 +74,13 @@ public class GenericTaskService extends GcmTaskService{
             }
         }
 
-        // Handle data
-        Log.e(TAG, "getResponse = " + getResponse);
-        StockFoxUtils.quoteJsonToStock(getResponse, mContext);
-
+        // Handle received data
+        if (getResponse != null) {
+            StockFoxUtils.JSONtoDB(getResponse, mContext);
+        } else{
+            Log.e(TAG, "Nothing received from request to : " + urlString);
+            Toast.makeText(mContext, "Yahoo! server not responding.", Toast.LENGTH_LONG);
+        }
         return result;
     }
 

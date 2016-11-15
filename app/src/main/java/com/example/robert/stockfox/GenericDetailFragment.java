@@ -62,6 +62,7 @@ public class GenericDetailFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.generic_detail_fragment, container, false);
 
         String TAG = "GenericDetailFragment";
+        Log.e(TAG, "onCreateView id: " + id);
         Cursor cursor;
 
         cursor = getActivity().getContentResolver().query(

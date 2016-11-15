@@ -205,6 +205,7 @@ public class DatabaseContentProvider extends ContentProvider{
                 " returned " + String.valueOf(_id));
                 break;
             }
+
             case ONE_STOCK: {
                 Log.e(TAG, "ONE_STOCK case met");
                 long _id = db.insert(DatabaseContract.StockTable.TABLE_NAME, null, contentValues);
@@ -226,12 +227,16 @@ public class DatabaseContentProvider extends ContentProvider{
         final SQLiteDatabase db = databaseManager.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         int rowsDeleted;
+        String stockSymbol = uri.getPathSegments().get(2);
+
         // this makes delete all rows return the number of rows deleted
         if ( null == selection ) selection = "1";
         switch (match) {
             case ONE_STOCK:
                 rowsDeleted = db.delete(
-                        DatabaseContract.StockTable.TABLE_NAME, selection, selectionArgs);
+                        DatabaseContract.StockTable.TABLE_NAME,
+                        DatabaseContract.StockTable.SYMBOL + " = ?",
+                        new String[]{stockSymbol});
                 break;
             // additional cases as necessary
             default:

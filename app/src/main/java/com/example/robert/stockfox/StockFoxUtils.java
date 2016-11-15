@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,7 @@ public class StockFoxUtils {
         String urlString;
         StringBuilder urlStringBuilder = new StringBuilder();
         StringBuilder mStoredSymbols = new StringBuilder();
+        Boolean symbolIsUnique = true;
 
         // Start with the base of the URL
         try{
@@ -49,72 +51,56 @@ public class StockFoxUtils {
                 null,
                 null);
 
-
+        // Extract the existing symbols. Make new request is unique.
         if (initQueryCursor != null) {
             initQueryCursor.moveToFirst();
             for (int i = 0; i < initQueryCursor.getCount(); i++){
-                // Append each symbol found by the cursor, surrounded by quotes, to StringBuilder mStoredSymbols
-                mStoredSymbols.append("\""+
-                        initQueryCursor.getString(initQueryCursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL))+"\",");
+                String symbol = initQueryCursor.getString(initQueryCursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
+                if (symbol.equals(addSymbol)) {
+                    symbolIsUnique = false;
+                    Log.e(TAG, symbol + " is not unique");
+                    Toast.makeText(mContext, " already exists.", Toast.LENGTH_LONG).show();
+                }
+                mStoredSymbols.append("\""+ symbol +"\",");
                 initQueryCursor.moveToNext();
             }
             initQueryCursor.close();
         }
+        Log.e(TAG, "Existing symbols in the database: " + mStoredSymbols.toString());
 
-        Log.e(TAG, "Following DB query, mStoredSymbols.toString(): " + mStoredSymbols.toString());
-
-        // Add in whatever was passed in if !null
-        if (addSymbol != null){
+        // Append any requested symbol to the list of existing symbols.
+        if ((addSymbol != null) && (symbolIsUnique)){
+            Log.e(TAG, "Appending unique, non null symbol " + addSymbol);
             mStoredSymbols.append("\"" + addSymbol + "\",");
         }
-
-        Log.e(TAG, "Following addition of passed Symbol, mStoredSymbols.toString(): " + mStoredSymbols.toString());
-        Log.e(TAG, "mStoredSymbols.toString().length(): " + + mStoredSymbols.toString().length());
+        Log.e(TAG, "All symbols to be requested: " + mStoredSymbols.toString());
 
         // If nothing was passed or in the DB, use these defaults
         if (mStoredSymbols.toString().length() == 0){
             mStoredSymbols.append("\"YHOO\",\"AAPL\",\"MSFT\",");
+            Log.e(TAG, "No symbols found. Using defaults");
         }
-
-        Log.e(TAG, "After the default check, mStoredSymbols.toString(): " + mStoredSymbols.toString());
-        Log.e(TAG, "mStoredSymbols.toString().length(): " + + mStoredSymbols.toString().length());
 
         // Finalize symbol picks
         mStoredSymbols.replace(mStoredSymbols.length() - 1, mStoredSymbols.length(), ")");
-
-        Log.e(TAG, "After finalization, mStoredSymbols = " + mStoredSymbols.toString());
         try {
-            // add mStoredSymbols to the urlStringBuilder
             urlStringBuilder.append(URLEncoder.encode(mStoredSymbols.toString(), "UTF-8"));
-            Log.e(TAG, "urlStringBuilder = " + urlStringBuilder.toString());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        // If there isn't anything in the db, and there wasn't anything passed in, use defaults
-
-//        try {
-//            urlStringBuilder.append(
-//            URLEncoder.encode("\"YHOO\",\"AAPL\",\"FARK\",\"MSFT\")", "UTF-8"));
-//
-//            // See what the request URL looks like now
-//            Log.e(TAG, "urlStringBuilder = " + urlStringBuilder.toString());
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
 
         // finalize the URL for the API query.
         urlStringBuilder.append("&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables."
                 + "org%2Falltableswithkeys&callback=");
 
-        Log.e(TAG, "urlStringBuilder = " + urlStringBuilder.toString());
-
         urlString = urlStringBuilder.toString();
+        Log.e(TAG, "Final request to Yahoo!: " + urlString);
 
         return urlString;
     }
 
-    public static void quoteJsonToStock(String JSON, Context mContext){
-        String TAG = "quoteJsonToStock";
+    public static void JSONtoDB(String JSON, Context mContext){
+        String TAG = "JSONtoDB";
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
         JSONObject jsonObject = null;
         JSONArray resultsArray = null;
@@ -133,36 +119,48 @@ public class StockFoxUtils {
                                 values
                         );
                     } else {
-                        Log.e(TAG, "stock is not valid");
+                        Log.e(TAG, stock.getSymbol() + " returned invalid data and was not inserted");
                     }
-
-                } else{
+                } else {
                     resultsArray = jsonObject.getJSONObject("results").getJSONArray("quote");
                     if (resultsArray != null && resultsArray.length() != 0){
                         for (int i = 0; i < resultsArray.length(); i++){
                             jsonObject = resultsArray.getJSONObject(i);
                             Stock stock = new Stock(jsonObject);
                             if (stockIsValid(stock)){
-                                Log.e(TAG, "VALID: " + stock.getSymbol());
                                 ContentValues values = stockToContentValues(stock);
                                 Uri insertedUri = mContext.getContentResolver().insert(
                                         DatabaseContract.CONTENT_URI,
                                         values
                                 );
                             } else {
-                                Log.e(TAG, "INVALID: " + stock.getSymbol());
+                                Log.e(TAG, stock.getSymbol() + " returned invalid data and was not inserted");
                             }
                         }
                     }
                 }
             }
         } catch (JSONException e){
-            Log.e(TAG, "String to JSON failed: " + e);
+            Log.e(TAG, "JSON input could not be parsed. " + e);
         }
     }
 
     public static Boolean stockIsValid(Stock stock){
-        return (!stock.getName().equals("null"));
+        // The Yahoo! API is unreliable. Sometimes it returns null values in the response where
+        // names or numbers are expected. We also see null values returned when invalid stocks
+        // are requested.
+
+        String TAG = "SFU/stockIsValid()";
+        Log.e(TAG, "getSymbol: " + stock.getSymbol());
+        Log.e(TAG, "getBid: " + stock.getBid());
+        Log.e(TAG, "getName: " + stock.getName());
+        Log.e(TAG, "getOpen: " + stock.getOpen());
+        Log.e(TAG, "getLastTradeDate: " + stock.getLastTradeDate());
+
+        return ((!stock.getName().equals("null")) &&
+                (!stock.getBid().equals("null")) &&
+                (!stock.getOpen().equals("null")) &&
+                (!stock.getLastTradeDate().equals("null")));
     }
 
     public static ContentValues stockToContentValues(Stock stock){

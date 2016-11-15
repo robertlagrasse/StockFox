@@ -2,6 +2,8 @@ package com.example.robert.stockfox;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by robert on 11/7/16.

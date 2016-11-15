@@ -31,5 +31,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:+'
     compile 'com.melnykov:floatingactionbutton:1.2.0'
     compile 'com.jjoe64:graphview:4.2.1'
-
+    compile 'com.afollestad.material-dialogs:core:0.9.1.0'
 }

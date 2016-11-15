@@ -27,7 +27,7 @@ public class GenericUtils {
     }
 
     public static PeriodicTask buildPeriodicTask(){
-        long period = 120L;
+        long period = 3600L;
         long flex = 10L;
         String periodicTag = "periodic";
 
