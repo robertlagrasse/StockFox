@@ -44,7 +44,9 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex("symbol")));
         viewHolder.bidPrice.setText(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.BID)));
         int sdk = Build.VERSION.SDK_INT;
-        if (cursor.getInt(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGE)) == 1){
+        double open = Double.parseDouble(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.OPEN)));
+        double bid = Double.parseDouble(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.BID)));
+        if (bid > open){
             if (sdk < Build.VERSION_CODES.JELLY_BEAN){
                 viewHolder.change.setBackgroundDrawable(
                         mContext.getResources().getDrawable(R.drawable.percent_change_pill_green));
@@ -72,9 +74,12 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     @Override public void onItemDismiss(int position) {
         Cursor c = getCursor();
         c.moveToPosition(position);
+        Log.e("onItemDismiss()", "c.getCount() before delete: " + c.getCount());
+        notifyItemRemoved(position);
         String symbol = c.getString(c.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
         mContext.getContentResolver().delete(DatabaseContract.CONTENT_URI.buildUpon().appendPath("symbol").appendPath(symbol).build(), null, null);
-        notifyItemRemoved(position);
+        Log.e("onItemDismiss()", "c.getCount() after delete: " + c.getCount());
+
     }
 
     @Override public int getItemCount() {
@@ -102,6 +107,8 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         @Override
         public void onItemClear(){
             itemView.setBackgroundColor(0);
+            Log.e("QCA", "onItemClear()");
+
         }
 
         @Override

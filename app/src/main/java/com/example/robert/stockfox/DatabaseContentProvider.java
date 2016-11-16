@@ -242,10 +242,9 @@ public class DatabaseContentProvider extends ContentProvider{
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        // Because a null deletes all rows
-        if (rowsDeleted != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
         return rowsDeleted;
     }
 

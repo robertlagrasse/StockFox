@@ -9,7 +9,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,18 +16,30 @@
             </intent-filter>
         </activity>
         <activity android:name=".GenericDetailActivity" />
-        <service android:name="com.example.robert.stockfox.GenericTaskService"
-            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE"
-            android:exported="true">
+
+        <service
+            android:name=".GenericTaskService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
-        <service android:name="com.example.robert.stockfox.GenericIntentService" />
-
+        <service android:name=".GenericIntentService" />
 
         <provider
-            android:authorities="com.example.robert.stockfox"
-            android:name="com.example.robert.stockfox.DatabaseContentProvider" />
+            android:name=".DatabaseContentProvider"
+            android:authorities="com.example.robert.stockfox" />
+
+        <receiver android:name=".StockWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/stock_widget_info" />
+        </receiver>
     </application>
+
 </manifest>
