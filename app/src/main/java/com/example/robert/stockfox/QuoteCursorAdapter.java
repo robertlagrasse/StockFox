@@ -1,6 +1,7 @@
 package com.example.robert.stockfox;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -41,7 +42,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final Cursor cursor){
-        viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex("symbol")));
+        viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL)));
         viewHolder.bidPrice.setText(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.BID)));
         int sdk = Build.VERSION.SDK_INT;
         double open = Double.parseDouble(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.OPEN)));
@@ -64,7 +65,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
             }
         }
 //        if (Utils.showPercent){
-        if (true){
+        if (false){
             viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PERCENTCHANGE)));
         } else{
             viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGE)));
@@ -78,6 +79,9 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         notifyItemRemoved(position);
         String symbol = c.getString(c.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
         mContext.getContentResolver().delete(DatabaseContract.CONTENT_URI.buildUpon().appendPath("symbol").appendPath(symbol).build(), null, null);
+        Intent tmpServiceIntent = new Intent(mContext, GenericIntentService.class);
+        tmpServiceIntent.putExtra(DatabaseContract.StockTable.SYMBOL, (String) null);
+        mContext.startService(tmpServiceIntent);
         Log.e("onItemDismiss()", "c.getCount() after delete: " + c.getCount());
 
     }
@@ -106,7 +110,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
 
         @Override
         public void onItemClear(){
-            itemView.setBackgroundColor(0);
+            itemView.setBackgroundColor(696969);
             Log.e("QCA", "onItemClear()");
 
         }

@@ -7,7 +7,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -28,9 +27,11 @@ public class DatabaseContentProvider extends ContentProvider{
     public static final Uri     BASE_CONTENT_URI    = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String  STOCK_PATH          = DatabaseContract.STOCK_PATH;
     public static final Uri     CONTENT_URI         = BASE_CONTENT_URI.buildUpon().appendPath(STOCK_PATH).build();
+    public static final Uri     ALL_STOCKS_URI      = CONTENT_URI;
+
 
     private static final int    ALL_STOCKS          = 0;
-    private static final int    ONE_STOCK           = 1;
+    private static final int    STOCK_BY_SYMBOL     = 1;
     private static final int    UI_UPDATE           = 2;
     private static final int    ONE_ID              = 3;
     private static final int    UI_GRAPH            = 4;
@@ -41,7 +42,7 @@ public class DatabaseContentProvider extends ContentProvider{
     private static UriMatcher getUriMatcher() {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks", ALL_STOCKS);
-        uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/symbol/*", ONE_STOCK);
+        uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/symbol/*", STOCK_BY_SYMBOL);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/UI", UI_UPDATE);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/#", ONE_ID);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/graph/*", UI_GRAPH);
@@ -110,8 +111,8 @@ public class DatabaseContentProvider extends ContentProvider{
                 );
                 break;
             }
-            case ONE_STOCK: {
-                Log.e(TAG, "query() ONE_STOCK");
+            case STOCK_BY_SYMBOL: {
+                Log.e(TAG, "query() STOCK_BY_SYMBOL");
                 String stockSymbol = uri.getPathSegments().get(2);
                 retCursor = databaseManager.getReadableDatabase().query(
                         DatabaseContract.StockTable.TABLE_NAME,
@@ -181,7 +182,7 @@ public class DatabaseContentProvider extends ContentProvider{
         switch (uriMatcher.match(uri)) {
             case ALL_STOCKS:
                 return DIR;
-            case ONE_STOCK:
+            case STOCK_BY_SYMBOL:
                 return ITEM;
         }
         return "";
@@ -206,8 +207,8 @@ public class DatabaseContentProvider extends ContentProvider{
                 break;
             }
 
-            case ONE_STOCK: {
-                Log.e(TAG, "ONE_STOCK case met");
+            case STOCK_BY_SYMBOL: {
+                Log.e(TAG, "STOCK_BY_SYMBOL case met");
                 long _id = db.insert(DatabaseContract.StockTable.TABLE_NAME, null, contentValues);
                 returnUri = Uri.withAppendedPath(uri, String.valueOf(_id));
                 break;
@@ -232,7 +233,7 @@ public class DatabaseContentProvider extends ContentProvider{
         // this makes delete all rows return the number of rows deleted
         if ( null == selection ) selection = "1";
         switch (match) {
-            case ONE_STOCK:
+            case STOCK_BY_SYMBOL:
                 rowsDeleted = db.delete(
                         DatabaseContract.StockTable.TABLE_NAME,
                         DatabaseContract.StockTable.SYMBOL + " = ?",
@@ -256,7 +257,7 @@ public class DatabaseContentProvider extends ContentProvider{
         int rowsUpdated;
 
         switch (match) {
-            case ONE_STOCK:
+            case STOCK_BY_SYMBOL:
                 String movie = uri.getPathSegments().get(1);
                 rowsUpdated = db.update(DatabaseContract.StockTable.TABLE_NAME,
                         values,

@@ -1,20 +1,36 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#09C"
-    android:padding="@dimen/widget_margin">
+    android:background="#00000000"
+    >
 
     <LinearLayout
         android:id="@+id/widget"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#000000"
         android:orientation="vertical">
-        <ImageView
+
+        <TextView
+            android:id="@+id/widget_stock0"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/stock_graph"
-            />
+            android:text="Sample text that is incredibly long."
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:focusableInTouchMode="true"
+            android:duplicateParentState="true"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large">
+            <requestFocus android:focusable="true" android:focusableInTouchMode="true"
+                android:duplicateParentState="true" />
+        </TextView>
+
     </LinearLayout>
 </FrameLayout>

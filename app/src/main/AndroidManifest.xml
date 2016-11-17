@@ -26,6 +26,8 @@
             </intent-filter>
         </service>
         <service android:name=".GenericIntentService" />
+        <service android:name=".WidgetIntentService" />
+
 
         <provider
             android:name=".DatabaseContentProvider"

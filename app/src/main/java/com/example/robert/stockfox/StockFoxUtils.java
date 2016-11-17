@@ -3,6 +3,7 @@ package com.example.robert.stockfox;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -133,6 +134,7 @@ public class StockFoxUtils {
                                         DatabaseContract.CONTENT_URI,
                                         values
                                 );
+                                updateWidgets(mContext);
                             } else {
                                 Log.e(TAG, stock.getSymbol() + " returned invalid data and was not inserted");
                             }
@@ -151,11 +153,11 @@ public class StockFoxUtils {
         // are requested.
 
         String TAG = "SFU/stockIsValid()";
-        Log.e(TAG, "getSymbol: " + stock.getSymbol());
-        Log.e(TAG, "getBid: " + stock.getBid());
-        Log.e(TAG, "getName: " + stock.getName());
-        Log.e(TAG, "getOpen: " + stock.getOpen());
-        Log.e(TAG, "getLastTradeDate: " + stock.getLastTradeDate());
+//        Log.e(TAG, "getSymbol: " + stock.getSymbol());
+//        Log.e(TAG, "getBid: " + stock.getBid());
+//        Log.e(TAG, "getName: " + stock.getName());
+//        Log.e(TAG, "getOpen: " + stock.getOpen());
+//        Log.e(TAG, "getLastTradeDate: " + stock.getLastTradeDate());
 
         return ((!stock.getName().equals("null")) &&
                 (!stock.getBid().equals("null")) &&
@@ -251,4 +253,17 @@ public class StockFoxUtils {
         return cv;
     }
 
+    private static void updateWidgets(Context context){
+        String TAG = "SFU/updateWidgets()";
+
+        Log.e(TAG, "updateWidgets()");
+         String ACTION_DATA_UPDATED =
+          //      "com.example.robert.stockfox.app.ACTION_DATA_UPDATED";
+        "android.appwidget.action.APPWIDGET_UPDATE";
+
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
+
+    }
 }
