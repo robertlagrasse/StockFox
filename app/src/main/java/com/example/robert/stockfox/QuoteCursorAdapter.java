@@ -64,8 +64,8 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
                         mContext.getResources().getDrawable(R.drawable.percent_change_pill_red));
             }
         }
-//        if (Utils.showPercent){
-        if (false){
+
+        if (StockFoxUtils.showPercent){
             viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.PERCENTCHANGE)));
         } else{
             viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(DatabaseContract.StockTable.CHANGE)));
@@ -75,15 +75,11 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     @Override public void onItemDismiss(int position) {
         Cursor c = getCursor();
         c.moveToPosition(position);
-        Log.e("onItemDismiss()", "c.getCount() before delete: " + c.getCount());
         notifyItemRemoved(position);
         String symbol = c.getString(c.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
+        // TODO: Build proper URI method
         mContext.getContentResolver().delete(DatabaseContract.CONTENT_URI.buildUpon().appendPath("symbol").appendPath(symbol).build(), null, null);
-        Intent tmpServiceIntent = new Intent(mContext, GenericIntentService.class);
-        tmpServiceIntent.putExtra(DatabaseContract.StockTable.SYMBOL, (String) null);
-        mContext.startService(tmpServiceIntent);
-        Log.e("onItemDismiss()", "c.getCount() after delete: " + c.getCount());
-
+        mContext.getContentResolver().notifyChange(DatabaseContract.CONTENT_URI, null);
     }
 
     @Override public int getItemCount() {
@@ -111,8 +107,6 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         @Override
         public void onItemClear(){
             itemView.setBackgroundColor(696969);
-            Log.e("QCA", "onItemClear()");
-
         }
 
         @Override

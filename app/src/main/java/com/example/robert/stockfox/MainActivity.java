@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Vibrator;
 import android.provider.ContactsContract;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.google.android.gms.gcm.GcmNetworkManager;
@@ -32,10 +35,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     Context mContext;
     Boolean networkConnected;
     Intent mServiceIntent;
-    Cursor mCursor;
-    QuoteCursorAdapter mCursorAdapter;
+    Cursor mCursor; // Result of LoaderManager query
+    QuoteCursorAdapter mCursorAdapter; // receives data from LoaderManager query every time it happens
     ItemTouchHelper mItemTouchHelper;
     String mRequestedSymbol;
+    Boolean showPercent = false;
 
     private static final int CURSOR_LOADER_ID = 0;
 
@@ -83,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         mCursor.moveToPosition(position);
                         String symbol = mCursor.getString(mCursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
                         String id = mCursor.getString(mCursor.getColumnIndex(DatabaseContract.StockTable._ID));
-                        Log.e("RecyclerView", "Position: " + position + " Symbol: " + symbol + " ID: " + id);
                         Intent tmpServiceIntent = new Intent(mContext, GenericDetailActivity.class);
                         tmpServiceIntent.putExtra(DatabaseContract.StockTable._ID, id);
                         startActivity(tmpServiceIntent);
@@ -195,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // This is the database query
         // TODO: Proper URI Builder in the ContentProvider
         return new CursorLoader(this, DatabaseContract.CONTENT_URI.buildUpon().appendPath("UI").build(),
-                DatabaseContract.StockTable.STOCK_ALL_KEYS,
+                null,
                 null,
                 null,
                 null);
@@ -221,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }
         mRequestedSymbol = null;
+        StockFoxUtils.updateWidgets(mContext);
     }
 
     @Override
@@ -235,9 +239,43 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onResume() {
         mRequestedSymbol = null;
         String TAG = "onResume";
-        Log.e(TAG, "onResume() called");
         super.onResume();
         getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
         if (!networkConnected) networkToast();
+    }
+
+    public void restoreActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle("---> StockHawk <---");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.my_stocks, menu);
+        restoreActionBar();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.action_change_units){
+            // this is for changing stock changes from percent value to dollar value
+            StockFoxUtils.showPercent = !StockFoxUtils.showPercent;
+            this.getContentResolver().notifyChange(DatabaseContract.CONTENT_URI, null);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

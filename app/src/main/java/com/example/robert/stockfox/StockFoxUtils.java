@@ -114,7 +114,6 @@ public class StockFoxUtils {
                                 DatabaseContract.CONTENT_URI,
                                 values
                         );
-                        updateWidgets(mContext);
                     } else {
                         Log.e(TAG, stock.getSymbol() + " returned invalid data and was not inserted");
                     }
@@ -130,7 +129,6 @@ public class StockFoxUtils {
                                         DatabaseContract.CONTENT_URI,
                                         values
                                 );
-                                updateWidgets(mContext);
                             } else {
                                 Log.e(TAG, stock.getSymbol() + " returned invalid data and was not inserted");
                             }
@@ -249,7 +247,7 @@ public class StockFoxUtils {
         return cv;
     }
 
-    private static void updateWidgets(Context context){
+    public static void updateWidgets(Context context){
         String TAG = "SFU/updateWidgets()";
 
         Log.e(TAG, "updateWidgets()");
@@ -285,4 +283,6 @@ public class StockFoxUtils {
         }
         return true;
     }
+
+    public static boolean showPercent = true;
 }

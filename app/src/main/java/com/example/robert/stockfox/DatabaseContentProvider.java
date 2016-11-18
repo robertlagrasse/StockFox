@@ -64,7 +64,6 @@ public class DatabaseContentProvider extends ContentProvider{
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
 
-        Log.e(TAG, "query() URI: " + uri.toString());
         /*
         Cursor query (Uri uri,
                 String[] projection,
