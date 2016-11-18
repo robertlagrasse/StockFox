@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     Cursor mCursor;
     QuoteCursorAdapter mCursorAdapter;
     ItemTouchHelper mItemTouchHelper;
+    String mRequestedSymbol;
 
     private static final int CURSOR_LOADER_ID = 0;
 
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         final String TAG = "MainActivity onCreate";
         mContext = this;
+        mRequestedSymbol = null;
 
         // Check network connectivity
         networkConnected = GenericUtils.networkCheck(this);
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mCursorAdapter = new QuoteCursorAdapter(this, null);
         recyclerView.setAdapter(mCursorAdapter);
+        recyclerView.setContentDescription("List of stocks");
 
         recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
                 new RecyclerViewItemClickListener.OnItemClickListener() {
@@ -91,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // Attach fab to RecyclerView TODO: Figure out why this is necessary.
         fab.attachToRecyclerView(recyclerView);
+        fab.setContentDescription("Button to add a new stock");
 
         // Listen for fab clicks
         fab.setOnClickListener(new View.OnClickListener() {
@@ -103,9 +108,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
                                 @Override
                                 public void onInput(MaterialDialog dialog, CharSequence input) {
-                                    Intent tmpServiceIntent = new Intent(mContext, GenericIntentService.class);
-                                    tmpServiceIntent.putExtra(DatabaseContract.StockTable.SYMBOL, input.toString().toUpperCase());
-                                    startService(tmpServiceIntent);
+                                    if (StockFoxUtils.stockIsUnique(mContext, input.toString().toUpperCase())) {
+                                        mRequestedSymbol = input.toString().toUpperCase();
+                                        Intent tmpServiceIntent = new Intent(mContext, GenericIntentService.class);
+                                        tmpServiceIntent.putExtra(DatabaseContract.StockTable.SYMBOL, input.toString().toUpperCase());
+                                        startService(tmpServiceIntent);
+                                    } else {
+                                        Toast.makeText(mContext, "Not unique!", Toast.LENGTH_LONG).show();
+                                        Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                                        v.vibrate(500);
+                                    }
                                 }
                             })
                             .show();
@@ -175,14 +187,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public void networkToast() {
         Toast.makeText(mContext, getString(R.string.network_toast), Toast.LENGTH_SHORT).show();
-        Log.e("networkToast()", "network is dead!");
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String TAG = "onCreateLoader";
-        Log.e(TAG, "onCreateLoader called");
         // This is the database query
+        // TODO: Proper URI Builder in the ContentProvider
         return new CursorLoader(this, DatabaseContract.CONTENT_URI.buildUpon().appendPath("UI").build(),
                 DatabaseContract.StockTable.STOCK_ALL_KEYS,
                 null,
@@ -196,11 +207,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         String TAG = "onLoadFinished()";
         mCursorAdapter.swapCursor(data);
         mCursor = data;
-
-        Stock stock = new Stock();
-
-        Log.e(TAG, "mCursor.getCount(): " + mCursor.getCount());
-
+        Log.e(TAG, "called");
+        // mRequestedSymbol is only non-null when the fab has been clicked.
+        if (mRequestedSymbol != null){
+            Log.e(TAG, "mRequestedSymbol was not null");
+            // if mRequestedSymbol is unique, it's not in the database, which means
+            // Yahoo! didn't have information on that stock. Alert user.
+            if (StockFoxUtils.stockIsUnique(mContext, mRequestedSymbol.toString().toUpperCase())){
+                Log.e(TAG, "Stock was not in database");
+                Toast.makeText(mContext, mRequestedSymbol + " not found!", Toast.LENGTH_LONG).show();
+                Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(500);
+            }
+        }
+        mRequestedSymbol = null;
     }
 
     @Override
@@ -213,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onResume() {
+        mRequestedSymbol = null;
         String TAG = "onResume";
         Log.e(TAG, "onResume() called");
         super.onResume();

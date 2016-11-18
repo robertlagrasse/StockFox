@@ -18,6 +18,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import android.content.Context;
+import android.os.Handler;
+import android.widget.Toast;
+
+
 /**
  * Created by robert on 11/4/16.
  *
@@ -57,29 +62,20 @@ public class StockFoxUtils {
             initQueryCursor.moveToFirst();
             for (int i = 0; i < initQueryCursor.getCount(); i++){
                 String symbol = initQueryCursor.getString(initQueryCursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
-                if (symbol.equals(addSymbol)) {
-                    symbolIsUnique = false;
-                    Log.e(TAG, symbol + " is not unique");
-                    Toast.makeText(mContext, " already exists.", Toast.LENGTH_LONG).show();
-                }
                 mStoredSymbols.append("\""+ symbol +"\",");
                 initQueryCursor.moveToNext();
             }
             initQueryCursor.close();
         }
-        Log.e(TAG, "Existing symbols in the database: " + mStoredSymbols.toString());
 
         // Append any requested symbol to the list of existing symbols.
         if ((addSymbol != null) && (symbolIsUnique)){
-            Log.e(TAG, "Appending unique, non null symbol " + addSymbol);
             mStoredSymbols.append("\"" + addSymbol + "\",");
         }
-        Log.e(TAG, "All symbols to be requested: " + mStoredSymbols.toString());
 
         // If nothing was passed or in the DB, use these defaults
         if (mStoredSymbols.toString().length() == 0){
             mStoredSymbols.append("\"YHOO\",\"AAPL\",\"MSFT\",");
-            Log.e(TAG, "No symbols found. Using defaults");
         }
 
         // Finalize symbol picks
@@ -95,7 +91,6 @@ public class StockFoxUtils {
                 + "org%2Falltableswithkeys&callback=");
 
         urlString = urlStringBuilder.toString();
-        Log.e(TAG, "Final request to Yahoo!: " + urlString);
 
         return urlString;
     }
@@ -119,6 +114,7 @@ public class StockFoxUtils {
                                 DatabaseContract.CONTENT_URI,
                                 values
                         );
+                        updateWidgets(mContext);
                     } else {
                         Log.e(TAG, stock.getSymbol() + " returned invalid data and was not inserted");
                     }
@@ -265,5 +261,28 @@ public class StockFoxUtils {
                 .setPackage(context.getPackageName());
         context.sendBroadcast(dataUpdatedIntent);
 
+    }
+
+    public static Boolean stockIsUnique(Context mContext, String addSymbol){
+        Cursor initQueryCursor;
+        initQueryCursor = mContext.getContentResolver().query(DatabaseContract.CONTENT_URI,
+                new String[] { "Distinct " + DatabaseContract.StockTable.SYMBOL },
+                null,
+                null,
+                null);
+
+        // Extract the existing symbols. Make new request is unique.
+        if (initQueryCursor != null) {
+            initQueryCursor.moveToFirst();
+            for (int i = 0; i < initQueryCursor.getCount(); i++){
+                String symbol = initQueryCursor.getString(initQueryCursor.getColumnIndex(DatabaseContract.StockTable.SYMBOL));
+                if (symbol.equals(addSymbol)) {
+                    return false;
+                }
+                initQueryCursor.moveToNext();
+            }
+            initQueryCursor.close();
+        }
+        return true;
     }
 }
