@@ -26,12 +26,10 @@ public class WidgetIntentService extends IntentService {
 
     public WidgetIntentService(){
         super("WidgetIntentService");
-        Log.e("WidgetIntentService", "Constructor called");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.e(TAG, "onHandleIntent");
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, StockWidget.class));
 
@@ -39,13 +37,13 @@ public class WidgetIntentService extends IntentService {
         // query returns cursor, iterate through rows
 
         Cursor initQueryCursor;
+        // Todo: proper URI builder
         initQueryCursor = getContentResolver().query(DatabaseContract.CONTENT_URI.buildUpon().appendPath("UI").build(),
                 null,
                 null,
                 null,
                 null);
 
-        Log.e(TAG, "initQueryCursor.getCount(): " + initQueryCursor.getCount());
         // Extract required data from cursor
         int listLength = initQueryCursor.getCount();
 
@@ -87,9 +85,9 @@ public class WidgetIntentService extends IntentService {
                 scrollText += "<font color=#FFFFFF>   |   </font>" +
                         colorList[i] +
                         symbolList[i] +
-                        "..." +
+                        "   " +
                         diffList[i] +
-                        "..." +
+                        "   " +
                         bidList[i] +
                         "</font>";
             }

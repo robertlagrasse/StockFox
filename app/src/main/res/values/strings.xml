@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Stock Hawk</string>
+    <string name="app_name">Stock Fox</string>
 
     <string name="action_example">Example action</string>
 
@@ -15,4 +15,14 @@
     <string name="add_widget">Add widget</string>
     <string name="recyclerViewDescription">List of stock symbols</string>
     <string name="fabDescription">Button to add a stock</string>
+    <string name="company_name">Company Name:</string>
+    <string name="stock_symbol">Symbol:</string>
+    <string name="open">Open:</string>
+    <string name="bid">Bid:</string>
+    <string name="graphView">Graph showing pricing information for the following dates.</string>
+    <string name="server_not_responding">Yahoo! server not responding.</string>
+    <string name="CDRecycler">List of Stocks</string>
+    <string name="CDfab">Button to add a new stock</string>
+    <string name="stock_not_unique">Symbol already being tracked!</string>
+    <string name="stock_not_found">was not found!</string>
 </resources>

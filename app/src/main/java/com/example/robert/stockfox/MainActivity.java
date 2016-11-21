@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mCursorAdapter = new QuoteCursorAdapter(this, null);
         recyclerView.setAdapter(mCursorAdapter);
-        recyclerView.setContentDescription("List of stocks");
+        recyclerView.setContentDescription(getString(R.string.CDRecycler));
 
         recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
                 new RecyclerViewItemClickListener.OnItemClickListener() {
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // Attach fab to RecyclerView TODO: Figure out why this is necessary.
         fab.attachToRecyclerView(recyclerView);
-        fab.setContentDescription("Button to add a new stock");
+        fab.setContentDescription(getString(R.string.CDfab));
 
         // Listen for fab clicks
         fab.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                                         tmpServiceIntent.putExtra(DatabaseContract.StockTable.SYMBOL, input.toString().toUpperCase());
                                         startService(tmpServiceIntent);
                                     } else {
-                                        Toast.makeText(mContext, "Not unique!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(mContext, getString(R.string.stock_not_unique), Toast.LENGTH_LONG).show();
                                         Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
                                         v.vibrate(500);
                                     }
@@ -210,15 +210,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         String TAG = "onLoadFinished()";
         mCursorAdapter.swapCursor(data);
         mCursor = data;
-        Log.e(TAG, "called");
         // mRequestedSymbol is only non-null when the fab has been clicked.
         if (mRequestedSymbol != null){
-            Log.e(TAG, "mRequestedSymbol was not null");
             // if mRequestedSymbol is unique, it's not in the database, which means
             // Yahoo! didn't have information on that stock. Alert user.
             if (StockFoxUtils.stockIsUnique(mContext, mRequestedSymbol.toString().toUpperCase())){
-                Log.e(TAG, "Stock was not in database");
-                Toast.makeText(mContext, mRequestedSymbol + " not found!", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, mRequestedSymbol + " " + getString(R.string.stock_not_found), Toast.LENGTH_LONG).show();
                 Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(500);
             }
@@ -230,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         String TAG = "onLoaderReset()";
-        Log.e(TAG, "onLoaderReset called");
         mCursorAdapter.swapCursor(null);
     }
 
@@ -248,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle("---> StockHawk <---");
+        actionBar.setTitle(getString(R.string.app_name));
     }
 
     @Override

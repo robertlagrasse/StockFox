@@ -46,9 +46,6 @@ public class DatabaseContentProvider extends ContentProvider{
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/UI", UI_UPDATE);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/#", ONE_ID);
         uriMatcher.addURI(DatabaseContract.CONTENT_AUTHORITY, "stocks/graph/*", UI_GRAPH);
-
-
-
         return uriMatcher;
     }
 

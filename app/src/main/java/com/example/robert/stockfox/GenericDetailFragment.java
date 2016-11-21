@@ -20,6 +20,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.text.format.DateUtils.FORMAT_SHOW_DATE;
+import static android.text.format.DateUtils.formatDateRange;
+
 /**
  * Created by robert on 11/10/16.
  *
@@ -43,9 +46,7 @@ import java.util.Date;
  * data points to be plotted.
  *
  * Because we're plotting opening and closing values, there are necessarily twice as many
- * datapoints to be plotted as their are rows returned by the cursor. The
- * valuePosition = ((x+1)*2)-2; statement allows me to keep track of the element I need
- * to assign in the datapoints array as I iterate through the cursor.
+ * datapoints to be plotted as their are rows returned by the cursor.
  *
  * I used midnight and noon as the time stamps to evenly space out the two datapoints per
  * day.
@@ -62,10 +63,10 @@ public class GenericDetailFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.generic_detail_fragment, container, false);
 
         String TAG = "GenericDetailFragment";
-        Log.e(TAG, "onCreateView id: " + id);
         Cursor cursor;
 
         cursor = getActivity().getContentResolver().query(
+                // TODO: proper Uri builder
                 DatabaseContract.CONTENT_URI.buildUpon().appendPath(id).build(),
                 null,
                 null,
@@ -74,20 +75,17 @@ public class GenericDetailFragment extends Fragment {
 
         Stock stock = new Stock(cursor);
 
-        TextView tvId = (TextView) rootView.findViewById(R.id.text_id);
-        tvId.setText("ID: " + id);
-
         TextView tvName = (TextView) rootView.findViewById(R.id.text_name);
-        tvName.setText("Name: " + stock.getName());
+        tvName.setText(getString(R.string.company_name) + stock.getName());
 
         TextView tvSymbol = (TextView) rootView.findViewById(R.id.text_symbol);
-        tvSymbol.setText("Symbol: " + stock.getSymbol());
-        Log.e(TAG, "Symbol: " + stock.getSymbol());
+        tvSymbol.setText(getString(R.string.stock_symbol) + stock.getSymbol());
 
         TextView tvBid = (TextView) rootView.findViewById(R.id.text_bid);
-        tvBid.setText("Bid: " + stock.getLastTradeDate());
+        tvBid.setText(getString(R.string.open) + stock.getOpen() + " " + getString(R.string.bid) + stock.getBid());
 
         cursor = getActivity().getContentResolver().query(
+                // TODO: Uri Builder
                 DatabaseContract.CONTENT_URI.buildUpon().appendPath("graph").appendPath(stock.getSymbol()).build(),
                 null,
                 null,
@@ -125,7 +123,8 @@ public class GenericDetailFragment extends Fragment {
         }
         graphStartDate = dataPoints[0].getX();
         graphEndDate = dataPoints[dataPoints.length-1].getX();
-        Log.e(TAG, "graphStartDate: " + graphStartDate + " graphEndDate: " + graphEndDate);
+        String dateRange = formatDateRange(getActivity(), (long) graphStartDate, (long) graphEndDate, FORMAT_SHOW_DATE);
+        graphView.setContentDescription(getString(R.string.graphView) + dateRange);
 
         LineGraphSeries series = new LineGraphSeries<DataPoint>(dataPoints);
         graphView.addSeries(series);
@@ -134,7 +133,6 @@ public class GenericDetailFragment extends Fragment {
 
         return rootView;
     }
-
     public void setId(String id) {
         this.id = id;
     }

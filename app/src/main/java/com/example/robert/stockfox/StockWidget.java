@@ -27,7 +27,6 @@ public class StockWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.e(TAG, "onUpdate()");
         Intent widgetIntentService = new Intent(context, WidgetIntentService.class);
         context.startService(widgetIntentService);
 
@@ -36,21 +35,18 @@ public class StockWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
-        Log.e(TAG, "onEnabled()");
 
     }
 
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
-        Log.e(TAG, "onDisabled()");
 
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        Log.e(TAG, "onReceive() intent.getAction().toString():" + intent.getAction().toString());
         Intent widgetIntentService = new Intent(context, WidgetIntentService.class);
         context.startService(widgetIntentService);
     }
@@ -58,7 +54,6 @@ public class StockWidget extends AppWidgetProvider {
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
         context.startService(new Intent(context, WidgetIntentService.class));
-        Log.e(TAG, "onAppWidgetOptionsChanged()");
 
     }
 }

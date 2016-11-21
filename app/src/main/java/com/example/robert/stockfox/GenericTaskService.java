@@ -58,8 +58,6 @@ public class GenericTaskService extends GcmTaskService{
             stockInput = params.getExtras().getString(DatabaseContract.StockTable.SYMBOL);
         }
 
-
-
         // Build URL to identify target data source
         urlString = StockFoxUtils.buildURLasString(mContext, stockInput);
 
@@ -74,13 +72,11 @@ public class GenericTaskService extends GcmTaskService{
                 e.printStackTrace();
             }
         }
-
         // Handle received data
         if (getResponse != null) {
             StockFoxUtils.JSONtoDB(getResponse, mContext);
         } else{
-            Log.e(TAG, "Nothing received from request to : " + urlString);
-            Toast.makeText(mContext, "Yahoo! server not responding.", Toast.LENGTH_LONG);
+            Toast.makeText(mContext, getString(R.string.server_not_responding), Toast.LENGTH_LONG);
         }
         return result;
     }

@@ -25,7 +25,6 @@ public class GenericDetailActivity extends AppCompatActivity {
         // Extract _ID from extra passed with intent that fired up this activity
         Intent intent = getIntent();
         String id = intent.getStringExtra(DatabaseContract.StockTable._ID);
-        Log.e(TAG, "ID passed via intent: " + id);
         GenericDetailFragment gdf = new GenericDetailFragment();
         gdf.setId(id);
         fragmentTransaction.add(R.id.generic_detail_activity, gdf);
