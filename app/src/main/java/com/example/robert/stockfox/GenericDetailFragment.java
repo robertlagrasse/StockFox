@@ -60,6 +60,10 @@ public class GenericDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState != null){
+            id = savedInstanceState.getString("id");
+        }
+
         final View rootView = inflater.inflate(R.layout.generic_detail_fragment, container, false);
 
         String TAG = "GenericDetailFragment";
@@ -135,5 +139,11 @@ public class GenericDetailFragment extends Fragment {
     }
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("id", id);
     }
 }

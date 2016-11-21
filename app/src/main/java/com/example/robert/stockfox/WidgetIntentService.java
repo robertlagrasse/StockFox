@@ -76,6 +76,7 @@ public class WidgetIntentService extends IntentService {
             initQueryCursor.close();
         }
 
+
         // Loop through widgetIds
         for (int appWidgetId : appWidgetIds) {
 
