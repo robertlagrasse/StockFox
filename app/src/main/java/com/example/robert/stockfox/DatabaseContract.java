@@ -40,10 +40,24 @@ class DatabaseContract {
     static final Uri CONTENT_URI =
             BASE_CONTENT_URI.buildUpon().appendPath(STOCK_PATH).build();
 
-    // Some public methods to help build ContentProvider requests
-    // TODO: Build relevant methods for stock requests
-    public static Uri buildMovieURI(long id) {
-        return ContentUris.withAppendedId(CONTENT_URI, id);
+    public static Uri buildAllStocksUri() {
+        return CONTENT_URI;
+    }
+
+    public static Uri buildStockBySymbolUri(String symbol){
+        return CONTENT_URI.buildUpon().appendPath("symbol").appendPath(symbol).build();
+    }
+
+    public static Uri buildUiUpdateUri(){
+        return CONTENT_URI.buildUpon().appendPath("UI").build();
+    }
+
+    public static Uri buildStockByIdUri(String id){
+        return CONTENT_URI.buildUpon().appendPath(id).build();
+    }
+
+    public static Uri buildStockGraphUri(String symbol){
+        return CONTENT_URI.buildUpon().appendPath("graph").appendPath(symbol).build();
     }
 
     static final class StockTable implements BaseColumns {

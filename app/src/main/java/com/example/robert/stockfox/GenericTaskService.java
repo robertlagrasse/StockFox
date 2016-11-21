@@ -44,9 +44,9 @@ public class GenericTaskService extends GcmTaskService{
 
     @Override
     public int onRunTask(TaskParams params) {
-//        if (mContext == null){
-//            mContext = this;
-//        }
+        if (mContext == null){
+            mContext = this;
+        }
         String stockInput = null;
         String urlString;
         String getResponse = null;

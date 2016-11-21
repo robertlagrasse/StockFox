@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Grab reference to FloatingActionButton
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        // Attach fab to RecyclerView TODO: Figure out why this is necessary.
+        // Attach fab to RecyclerView
         fab.attachToRecyclerView(recyclerView);
         fab.setContentDescription(getString(R.string.CDfab));
 
@@ -196,8 +196,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String TAG = "onCreateLoader";
         // This is the database query
-        // TODO: Proper URI Builder in the ContentProvider
-        return new CursorLoader(this, DatabaseContract.CONTENT_URI.buildUpon().appendPath("UI").build(),
+        return new CursorLoader(this, DatabaseContract.buildUiUpdateUri(),
                 null,
                 null,
                 null,

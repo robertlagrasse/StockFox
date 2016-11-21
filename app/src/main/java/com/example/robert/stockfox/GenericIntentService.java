@@ -29,11 +29,6 @@ public class GenericIntentService extends IntentService {
         GenericTaskService genericTaskService = new GenericTaskService(this);
 
         String symbol = intent.getStringExtra(DatabaseContract.StockTable.SYMBOL);
-//        if (symbol == null){
-//            Log.e(TAG, "intent.getStringExtra(DatabaseContract.StockTable.SYMBOL) was null");
-//        }else {
-//            Log.e(TAG, "symbol = " + symbol);
-//        }
 
         // Populate the intent
         args.putString(DatabaseContract.StockTable.SYMBOL, symbol);

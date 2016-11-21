@@ -22,7 +22,6 @@ public class DatabaseContentProvider extends ContentProvider{
     DatabaseManager databaseManager;
     private static String TAG = "DatabaseContentProvider";
 
-
     public static final String  CONTENT_AUTHORITY   = "com.example.robert.stockfox.DatabaseContentProvider";
     public static final Uri     BASE_CONTENT_URI    = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String  STOCK_PATH          = DatabaseContract.STOCK_PATH;
@@ -51,7 +50,6 @@ public class DatabaseContentProvider extends ContentProvider{
 
     @Override
     public boolean onCreate() {
-        Log.e(TAG, "onCreate");
         databaseManager = new DatabaseManager(getContext());
         return true;
     }
@@ -61,41 +59,10 @@ public class DatabaseContentProvider extends ContentProvider{
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
 
-        /*
-        Cursor query (Uri uri,
-                String[] projection,
-                String selection,
-                String[] selectionArgs,
-                String sortOrder)
-        Query the given URI, returning a Cursor over the result set.
-
-        For best performance, the caller should follow these guidelines:
-
-        Provide an explicit projection, to prevent reading
-        data from storage that aren't going to be used.
-
-        Use question mark parameter markers such as 'phone=?' instead of explicit values in the
-        selection parameter, so that queries that differ only by those values will be recognized
-        as the same for caching purposes.
-
-        Parameters
-        ----------
-        uri	Uri: The URI, using the content:// scheme, for the content to retrieve.
-        projection	String: A list of which columns to return. Passing null will return all columns, which is inefficient.
-        selection	String: A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE itself). Passing null will return all rows for the given URI.
-        selectionArgs	String: You may include ?s in selection, which will be replaced by the values from selectionArgs, in the order that they appear in the selection. The values will be bound as Strings.
-        sortOrder	String: How to order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself). Passing null will use the default sort order, which may be unordered.
-
-         */
-
-        // Here's the switch statement that, given a URI, will determine what kind of request it is,
-        // and query the database accordingly.
-
         Cursor retCursor;
         switch (getUriMatcher().match(uri)) {
 
             case ALL_STOCKS: {
-                Log.e(TAG, "query() ALL_STOCKS");
                 retCursor = databaseManager.getReadableDatabase().query(
                         DatabaseContract.StockTable.TABLE_NAME,
                         projection,
@@ -108,7 +75,6 @@ public class DatabaseContentProvider extends ContentProvider{
                 break;
             }
             case STOCK_BY_SYMBOL: {
-                Log.e(TAG, "query() STOCK_BY_SYMBOL");
                 String stockSymbol = uri.getPathSegments().get(2);
                 retCursor = databaseManager.getReadableDatabase().query(
                         DatabaseContract.StockTable.TABLE_NAME,
@@ -122,7 +88,6 @@ public class DatabaseContentProvider extends ContentProvider{
                 break;
             }
             case ONE_ID: {
-                Log.e(TAG, "query() ONE_ID");
                 String id = uri.getPathSegments().get(1);
                 retCursor = databaseManager.getReadableDatabase().query(
                         DatabaseContract.StockTable.TABLE_NAME,
@@ -136,8 +101,6 @@ public class DatabaseContentProvider extends ContentProvider{
                 break;
             }
             case UI_UPDATE: {
-                Log.e(TAG, "query() UI_UPDATE");
-                Log.e(TAG, DatabaseContract.StockTable.STOCK_ALL_KEYS_STRING);
                 retCursor = databaseManager.getReadableDatabase().rawQuery(
                         "SELECT " + DatabaseContract.StockTable.STOCK_ALL_KEYS_STRING +
                         ", MAX(" + DatabaseContract.StockTable._ID + ")" +
@@ -147,9 +110,7 @@ public class DatabaseContentProvider extends ContentProvider{
                 break;
             }
             case UI_GRAPH: {
-                Log.e(TAG, "query() UI_GRAPH");
                 String stockSymbol = uri.getPathSegments().get(2);
-                Log.e(TAG, DatabaseContract.StockTable.STOCK_ALL_KEYS_STRING);
                 retCursor = databaseManager.getReadableDatabase().rawQuery(
                         "SELECT " + DatabaseContract.StockTable.STOCK_ALL_KEYS_STRING +
                                 ", MAX(" + DatabaseContract.StockTable._ID + ")" +
@@ -169,8 +130,6 @@ public class DatabaseContentProvider extends ContentProvider{
     @Nullable
     @Override
     public String getType(Uri uri) {
-        Log.e(TAG, "getType() URI: " + uri.toString());
-
         // Some quick definitions to make the switch statement cleaner.
         final String DIR = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + STOCK_PATH;
         final String ITEM = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + STOCK_PATH;
@@ -187,24 +146,18 @@ public class DatabaseContentProvider extends ContentProvider{
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        Log.e(TAG, "insert() URI: " + uri.toString());
-
         final SQLiteDatabase db = databaseManager.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         Uri returnUri;
         returnUri = uri;
         switch (match) {
             case ALL_STOCKS: {
-                Log.e(TAG, "ALL_STOCKS case met");
                 long _id = db.insert(DatabaseContract.StockTable.TABLE_NAME, null, contentValues);
                 returnUri = Uri.withAppendedPath(uri, String.valueOf(_id));
-                Log.e(TAG, "Inserting: " + String.valueOf(contentValues.get(DatabaseContract.StockTable.SYMBOL)) +
-                " returned " + String.valueOf(_id));
                 break;
             }
 
             case STOCK_BY_SYMBOL: {
-                Log.e(TAG, "STOCK_BY_SYMBOL case met");
                 long _id = db.insert(DatabaseContract.StockTable.TABLE_NAME, null, contentValues);
                 returnUri = Uri.withAppendedPath(uri, String.valueOf(_id));
                 break;
@@ -219,7 +172,6 @@ public class DatabaseContentProvider extends ContentProvider{
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        Log.e(TAG, "delete() URI: " + uri.toString());
 
         final SQLiteDatabase db = databaseManager.getWritableDatabase();
         final int match = uriMatcher.match(uri);
@@ -247,7 +199,6 @@ public class DatabaseContentProvider extends ContentProvider{
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        Log.e(TAG, "update() URI: " + uri.toString());
         final SQLiteDatabase db = databaseManager.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         int rowsUpdated;
@@ -263,15 +214,11 @@ public class DatabaseContentProvider extends ContentProvider{
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-//        if (rowsUpdated != 0) {
-//            getContext().getContentResolver().notifyChange(uri, null);
-//        }
         return rowsUpdated;
     }
 
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
-        Log.e(TAG, "bulkInsert() URI: " + uri.toString());
         final SQLiteDatabase db = databaseManager.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         switch (match) {
@@ -295,5 +242,4 @@ public class DatabaseContentProvider extends ContentProvider{
                 return super.bulkInsert(uri, values);
         }
     }
-
 }

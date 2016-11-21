@@ -33,12 +33,8 @@ public class WidgetIntentService extends IntentService {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, StockWidget.class));
 
-        // Make required DB query, get a cursor - same cursor that feeds the RecyclerView
-        // query returns cursor, iterate through rows
-
         Cursor initQueryCursor;
-        // Todo: proper URI builder
-        initQueryCursor = getContentResolver().query(DatabaseContract.CONTENT_URI.buildUpon().appendPath("UI").build(),
+        initQueryCursor = getContentResolver().query(DatabaseContract.buildUiUpdateUri(),
                 null,
                 null,
                 null,

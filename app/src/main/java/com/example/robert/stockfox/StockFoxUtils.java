@@ -44,15 +44,14 @@ public class StockFoxUtils {
             urlStringBuilder.append("https://query.yahooapis.com/v1/public/yql?q=");
             urlStringBuilder.append(URLEncoder.encode("select * from yahoo.finance.quotes where symbol "
                     + "in (", "UTF-8"));
-            Log.e(TAG, "urlStringBuilder = " + urlStringBuilder.toString());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
         // Check the database. Grab the unique symbols.
         Cursor initQueryCursor;
-        initQueryCursor = mContext.getContentResolver().query(DatabaseContract.CONTENT_URI,
-                new String[] { "Distinct " + DatabaseContract.StockTable.SYMBOL },
+        initQueryCursor = mContext.getContentResolver().query(DatabaseContract.buildUiUpdateUri(),
+                null,
                 null,
                 null,
                 null);
@@ -115,7 +114,7 @@ public class StockFoxUtils {
                                 values
                         );
                     } else {
-                        Log.e(TAG, stock.getSymbol() + " returned invalid data and was not inserted");
+                        // Log something here if you like
                     }
                 } else {
                     resultsArray = jsonObject.getJSONObject("results").getJSONArray("quote");
@@ -130,7 +129,7 @@ public class StockFoxUtils {
                                         values
                                 );
                             } else {
-                                Log.e(TAG, stock.getSymbol() + " returned invalid data and was not inserted");
+                                // Log something here if you like
                             }
                         }
                     }
@@ -144,14 +143,7 @@ public class StockFoxUtils {
     public static Boolean stockIsValid(Stock stock){
         // The Yahoo! API is unreliable. Sometimes it returns null values in the response where
         // names or numbers are expected. We also see null values returned when invalid stocks
-        // are requested.
-
-        String TAG = "SFU/stockIsValid()";
-//        Log.e(TAG, "getSymbol: " + stock.getSymbol());
-//        Log.e(TAG, "getBid: " + stock.getBid());
-//        Log.e(TAG, "getName: " + stock.getName());
-//        Log.e(TAG, "getOpen: " + stock.getOpen());
-//        Log.e(TAG, "getLastTradeDate: " + stock.getLastTradeDate());
+        // are requested. If we don't get everything we need, the update is invalid.
 
         return ((!stock.getName().equals("null")) &&
                 (!stock.getBid().equals("null")) &&
@@ -250,7 +242,6 @@ public class StockFoxUtils {
     public static void updateWidgets(Context context){
         String TAG = "SFU/updateWidgets()";
 
-        Log.e(TAG, "updateWidgets()");
          String ACTION_DATA_UPDATED =
           //      "com.example.robert.stockfox.app.ACTION_DATA_UPDATED";
         "android.appwidget.action.APPWIDGET_UPDATE";
@@ -263,8 +254,8 @@ public class StockFoxUtils {
 
     public static Boolean stockIsUnique(Context mContext, String addSymbol){
         Cursor initQueryCursor;
-        initQueryCursor = mContext.getContentResolver().query(DatabaseContract.CONTENT_URI,
-                new String[] { "Distinct " + DatabaseContract.StockTable.SYMBOL },
+        initQueryCursor = mContext.getContentResolver().query(DatabaseContract.buildUiUpdateUri(),
+                null,
                 null,
                 null,
                 null);

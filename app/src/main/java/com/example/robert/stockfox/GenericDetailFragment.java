@@ -70,8 +70,7 @@ public class GenericDetailFragment extends Fragment {
         Cursor cursor;
 
         cursor = getActivity().getContentResolver().query(
-                // TODO: proper Uri builder
-                DatabaseContract.CONTENT_URI.buildUpon().appendPath(id).build(),
+                DatabaseContract.buildStockByIdUri(id),
                 null,
                 null,
                 null,
@@ -89,8 +88,7 @@ public class GenericDetailFragment extends Fragment {
         tvBid.setText(getString(R.string.open) + stock.getOpen() + " " + getString(R.string.bid) + stock.getBid());
 
         cursor = getActivity().getContentResolver().query(
-                // TODO: Uri Builder
-                DatabaseContract.CONTENT_URI.buildUpon().appendPath("graph").appendPath(stock.getSymbol()).build(),
+                DatabaseContract.buildStockGraphUri(stock.getSymbol()),
                 null,
                 null,
                 null,
